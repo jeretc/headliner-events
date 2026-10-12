@@ -27,14 +27,14 @@ export function Gate({ onDemo, onCustom }: { onDemo: () => void; onCustom: () =>
           </div>
         </div>
 
-        <button onClick={onDemo} className="cond press mt-8 w-full bg-[var(--ink)] py-5 text-[36px] text-[var(--paper)]">
-          Try the demo
+        <button onClick={onCustom} className="cond press mt-8 w-full bg-[var(--ink)] py-5 text-[36px] text-[var(--paper)]">
+          Plan my event
         </button>
         <button
-          onClick={onCustom}
+          onClick={onDemo}
           className="cond press mt-3 w-full border-[3px] border-[var(--ink)] py-4 text-[28px]"
         >
-          Build your own
+          See an example
         </button>
       </div>
     </div>

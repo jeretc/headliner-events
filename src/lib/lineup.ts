@@ -19,6 +19,8 @@ export const demoRequest: LineupRequest = {
   entries: demoCandidates.map((c) => ({ id: c.id, name: c.name, kind: c.kind })),
 };
 
+export const blankRequest: LineupRequest = { eventName: "", seeds: [], entries: [] };
+
 // PLACEHOLDER suggestions; replaced by Qloo /search once the key is available.
 const artists = [
   "Tame Impala", "Fred again..", "Glass Animals", "Khruangbin", "Bonobo", "Billie Eilish", "Post Malone",

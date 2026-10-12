@@ -132,6 +132,7 @@ export function Builder({
           </label>
           <input
             id="event-name"
+            placeholder="Name your event"
             value={eventName}
             onChange={(e) => setEventName(e.target.value)}
             className="cond mt-2 w-full border-[3px] border-[var(--ink)] bg-transparent px-3 py-2 text-[34px] outline-none focus:bg-[var(--paper)]"

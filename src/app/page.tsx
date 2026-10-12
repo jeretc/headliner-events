@@ -6,13 +6,13 @@ import { Detail } from "@/components/detail";
 import { Gate } from "@/components/gate";
 import { Audience, Compare, Lineup, TabBar, TopBar, type Tab } from "@/components/report";
 import { Trace } from "@/components/trace";
-import { demoRequest, getLineup, type LineupRequest, type LineupResult } from "@/lib/lineup";
+import { blankRequest, demoRequest, getLineup, type LineupRequest, type LineupResult } from "@/lib/lineup";
 
 type Phase = "gate" | "builder" | "running" | "done";
 
 export default function Home() {
   const [phase, setPhase] = useState<Phase>("gate");
-  const [request, setRequest] = useState<LineupRequest>(demoRequest);
+  const [request, setRequest] = useState<LineupRequest>(blankRequest);
   const [result, setResult] = useState<LineupResult | null>(null);
   const [tab, setTab] = useState<Tab>("lineup");
   const [openId, setOpenId] = useState<string | null>(null);
