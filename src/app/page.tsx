@@ -20,13 +20,110 @@ function sponsorSize(c: Candidate) {
   return `${(3 + 6.5 * (c.fit / 100) * (isAvoid(c) ? 0.6 : 1)).toFixed(2)}cqw`;
 }
 
+type Step = { tag: "Resolve" | "Signals" | "Rank"; text: string; result?: string };
+
+// Simulated trace built from the mock data; becomes the real Qloo call log later.
+const steps: Step[] = [
+  ...event.seeds.map((s) => ({ tag: "Resolve" as const, text: s, result: "entity matched" })),
+  ...order.map((c) => ({
+    tag: "Signals" as const,
+    text: c.name,
+    result: `${c.signals.length} signals pulled`,
+  })),
+  ...order.map((c) => ({ tag: "Rank" as const, text: c.name, result: `${c.fit} · ${c.verdict}` })),
+];
+
+function Gate({ onRun }: { onRun: () => void }) {
+  return (
+    <div className="poster safe-top safe-bottom mx-auto flex min-h-screen max-w-2xl flex-col px-5">
+      <span className="cond text-[22px]">Headliner</span>
+      <div className="mt-auto">
+        <p className="label">Who to book. Who to sponsor.</p>
+        <h1 className="cond mt-3 text-[24cqw]">
+          Skyline
+          <br />
+          Festival
+        </h1>
+        <p className="label mt-4">{event.meta}</p>
+        <p className="mt-6 max-w-sm text-[17px] font-medium leading-snug">
+          {event.seeds.length} audience favourites. {candidates.length} candidates. One agent to rank them by real
+          cultural fit.
+        </p>
+        <button
+          onClick={onRun}
+          className="cond press mt-8 w-full bg-[var(--ink)] py-5 text-[40px] text-[var(--paper)]"
+        >
+          Build the lineup
+        </button>
+      </div>
+    </div>
+  );
+}
+
+function Running({ onDone }: { onDone: () => void }) {
+  const [n, setN] = useState(0);
+  const endRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (n >= steps.length) {
+      const t = setTimeout(onDone, 700);
+      return () => clearTimeout(t);
+    }
+    const t = setTimeout(() => setN((x) => x + 1), 170);
+    return () => clearTimeout(t);
+  }, [n, onDone]);
+
+  useEffect(() => {
+    endRef.current?.scrollIntoView({ block: "end" });
+  }, [n]);
+
+  const pct = Math.round((n / steps.length) * 100);
+  return (
+    <div className="fixed inset-0 z-30 overflow-y-auto bg-[var(--ink)] text-[var(--paper)]">
+      <div className="sticky top-0 bg-[var(--ink)]">
+        <div className="safe-top mx-auto flex max-w-2xl items-center justify-between px-5 pb-3">
+          <span className="label">Agent running · {pct}%</span>
+          <button onClick={onDone} className="label press border-2 border-[var(--paper)] px-3 py-2">
+            Skip
+          </button>
+        </div>
+        <div className="h-[6px] bg-[var(--paper)]/15">
+          <div className="h-full bg-[var(--ground)] transition-[width] duration-150" style={{ width: `${pct}%` }} />
+        </div>
+      </div>
+      <div className="mx-auto max-w-2xl px-5 pb-24 pt-6">
+        <p className="label text-[var(--ground)]">Simulated trace · live Qloo calls once connected</p>
+        <ul className="mt-4">
+          {steps.slice(0, n).map((s, i) => (
+            <li key={i} className="line">
+              <div>
+                <div className="flex items-baseline gap-3 border-b border-[var(--paper)]/15 py-2.5">
+                  <span className="label w-[68px] shrink-0 text-[var(--ground)]">{s.tag}</span>
+                  <span className="cond flex-1 text-[26px]">{s.text}</span>
+                  <span className="label text-right text-[var(--paper)]/60">{s.result}</span>
+                </div>
+              </div>
+            </li>
+          ))}
+        </ul>
+        <div ref={endRef} />
+      </div>
+    </div>
+  );
+}
+
 export default function Home() {
+  const [phase, setPhase] = useState<"idle" | "running" | "done">("idle");
   const [tab, setTab] = useState<Tab>("lineup");
   const [openId, setOpenId] = useState<string | null>(null);
+  const finish = useCallback(() => setPhase("done"), []);
+
+  if (phase === "idle") return <Gate onRun={() => setPhase("running")} />;
+  if (phase === "running") return <Running onDone={finish} />;
 
   return (
     <div className="app-pad mx-auto min-h-screen max-w-2xl">
-      <TopBar />
+      <TopBar onRerun={() => setPhase("running")} />
       <main>
         {tab === "lineup" && <Lineup onOpen={setOpenId} />}
         {tab === "compare" && <Compare onOpen={setOpenId} />}
@@ -38,11 +135,16 @@ export default function Home() {
   );
 }
 
-function TopBar() {
+function TopBar({ onRerun }: { onRerun: () => void }) {
   return (
-    <header className="flex items-center justify-between px-5 pb-1 pt-4">
+    <header className="safe-top flex items-center justify-between px-5 pb-1">
       <span className="cond text-[22px]">Headliner</span>
-      <span className="label border-2 border-[var(--ink)] px-2 py-1">Placeholder data</span>
+      <div className="flex items-center gap-2">
+        <span className="label border-2 border-[var(--ink)] px-2 py-1">Placeholder data</span>
+        <button onClick={onRerun} className="label press bg-[var(--ink)] px-3 py-[7px] text-[var(--paper)]">
+          Re-run
+        </button>
+      </div>
     </header>
   );
 }
@@ -197,7 +299,7 @@ function Detail({ id, onChange }: { id: string; onChange: (id: string | null) =>
         touchX.current = null;
       }}
     >
-      <div key={c.id} className="mx-auto max-w-2xl px-5 pb-16" style={{ paddingTop: "max(1rem, env(safe-area-inset-top))" }}>
+      <div key={c.id} className="safe-top mx-auto max-w-2xl px-5 pb-16">
         <div className="flex items-center justify-between">
           <button onClick={() => onChange(null)} className="label press border-2 border-[var(--ink)] px-3 py-2">
             Close
