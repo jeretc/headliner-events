@@ -14,9 +14,19 @@ Headliners and sponsors are usually chosen by **fame**. Fame is not **fit**. A g
 
 ## 2. What it does
 
-1. The organizer describes the event's audience through things the attendees already love (artists, brands) and supplies a pool of candidate headliners and sponsors.
-2. The agent resolves each name to a Qloo entity, pulls taste signals between the audience and every candidate, and ranks them.
-3. The result is a **lineup poster**: the better the cultural fit, the bigger the billing. Tap any name for the evidence behind its rank, including a side-by-side of what a generic LLM would say versus what Qloo's data says.
+**Who it's for:** event organizers (festivals, conferences, brand activations) choosing performers and sponsors for a specific audience.
+
+**How an organizer uses it:**
+
+1. **Describes the crowd** through things the attendees already love: artists, brands, anything. For example Tame Impala, Aesop and Patagonia.
+2. **Brings a shortlist**: the artists under consideration for headline slots, and the brands under consideration as sponsors. Headliner ranks what the organizer brings; it does not invent candidates.
+3. **Runs the agent.** A trace screen shows it working: matching each name, pulling taste signals, ranking.
+4. **Reads the lineup poster.** The better the cultural fit, the bigger the billing. Poor fits are small and struck through.
+5. **Opens any name for the evidence**: a fit score, a verdict (book, consider or avoid), a short reason, three signal bars (artist affinity, brand overlap, lifestyle fit), and a side-by-side of what a generic LLM would say versus what Qloo's data says.
+
+**What "sponsors" means here:** sponsors are the companies that pay to be associated with an event, such as a drinks brand with a booth or a clothing brand on the signage. Choosing which ones to approach is part of an organizer's job. Headliner ranks the brands under consideration by fit with the crowd, so the organizer knows who to call first and who not to spend time on. It does not find sponsors the organizer hasn't thought of, and it does not contact anyone.
+
+A one-tap **See an example** runs a fictional festival (Skyline Festival) end to end, so anyone can see a finished report immediately.
 
 It is an installable, mobile-first web app (PWA), designed as decision support, not a chat window.
 
