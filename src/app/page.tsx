@@ -215,7 +215,7 @@ function Compare({ onOpen }: { onOpen: (id: string) => void }) {
     <section className="px-5 pb-10 pt-6">
       <h1 className="cond text-[44px]">Side by side</h1>
       <p className="label mt-2">Three signals, every candidate</p>
-      <div className="mt-6 grid grid-cols-[1fr_repeat(3,44px)_44px] items-end gap-x-2 border-b-[3px] border-[var(--ink)] pb-2">
+      <div className="mt-6 grid grid-cols-[minmax(0,1fr)_repeat(3,34px)_38px] items-end gap-x-1.5 border-b-[3px] border-[var(--ink)] pb-2">
         <span />
         {["Art", "Brand", "Life"].map((h) => (
           <span key={h} className="label text-center">{h}</span>
@@ -226,9 +226,9 @@ function Compare({ onOpen }: { onOpen: (id: string) => void }) {
         <button
           key={c.id}
           onClick={() => onOpen(c.id)}
-          className="press grid w-full grid-cols-[1fr_repeat(3,44px)_44px] items-center gap-x-2 border-b border-[var(--ink)]/40 py-3 text-left"
+          className="press grid w-full grid-cols-[minmax(0,1fr)_repeat(3,34px)_38px] items-center gap-x-1.5 border-b border-[var(--ink)]/40 py-3 text-left"
         >
-          <span className={`cond text-[26px] ${isAvoid(c) ? "strike" : ""}`}>{c.name}</span>
+          <span className={`cond text-[22px] sm:text-[26px] ${isAvoid(c) ? "strike" : ""}`}>{c.name}</span>
           {cols.map((col) => {
             const s = c.signals.find((x) => x.label === col);
             return (

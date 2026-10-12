@@ -157,3 +157,6 @@ body { font-family: var(--font-body), system-ui, sans-serif; -webkit-tap-highlig
 .bar-fill { transform-origin: left; animation: fill .8s .1s cubic-bezier(.2,.8,.2,1) both; }
 @keyframes fill { from { transform: scaleX(0); } to { transform: scaleX(1); } }
 @media (prefers-reduced-motion: reduce) { .line > *, .sheet, .bar-fill, .press { animation: none; transition: none; } }
+
+button:not(:disabled) { cursor: pointer; }
+@media (hover: hover) { .press:hover { opacity: .8; } }
