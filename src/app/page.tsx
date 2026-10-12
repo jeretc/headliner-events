@@ -80,7 +80,7 @@ function Running({ onDone }: { onDone: () => void }) {
   const pct = Math.round((n / steps.length) * 100);
   return (
     <div className="fixed inset-0 z-30 overflow-y-auto bg-[var(--ink)] text-[var(--paper)]">
-      <div className="sticky top-0 bg-[var(--ink)]">
+      <div className="sticky top-0 z-10 bg-[var(--ink)]">
         <div className="safe-top mx-auto flex max-w-2xl items-center justify-between px-5 pb-3">
           <span className="label">Agent running · {pct}%</span>
           <button onClick={onDone} className="label press border-2 border-[var(--paper)] px-3 py-2">
