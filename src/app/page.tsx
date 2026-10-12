@@ -26,7 +26,7 @@ export default function Home() {
   const finish = useCallback(() => setPhase("done"), []);
 
   if (phase === "gate") {
-    return <Gate request={demoRequest} onDemo={() => run(demoRequest)} onCustom={() => setPhase("builder")} />;
+    return <Gate onDemo={() => run(demoRequest)} onCustom={() => setPhase("builder")} />;
   }
   if (phase === "builder") {
     return <Builder initial={request} onRun={run} onBack={() => setPhase("gate")} />;

@@ -1,38 +1,40 @@
 "use client";
 
-import type { LineupRequest } from "@/lib/lineup";
-
-export function Gate({
-  request,
-  onDemo,
-  onCustom,
-}: {
-  request: LineupRequest;
-  onDemo: () => void;
-  onCustom: () => void;
-}) {
+export function Gate({ onDemo, onCustom }: { onDemo: () => void; onCustom: () => void }) {
   return (
     <div className="poster safe-top safe-bottom mx-auto flex min-h-screen max-w-2xl flex-col px-5">
-      <span className="cond text-[22px]">Headliner</span>
+      <div className="flex items-center justify-between">
+        <span className="label">Powered by Qloo&apos;s taste graph</span>
+      </div>
+
       <div className="mt-auto">
-        <p className="label">Who to book. Who to sponsor.</p>
-        <h1 className="cond mt-3 text-[24cqw]">
-          Skyline
+        <h1 className="cond text-[22cqw]">Headliner</h1>
+        <p className="cond mt-4 text-[9cqw] leading-[0.95]">
+          Fame fills a poster.
           <br />
-          Festival
-        </h1>
-        <p className="mt-6 max-w-sm text-[17px] font-medium leading-snug">
-          {request.seeds.length} audience favourites. {request.entries.length} candidates. One agent to rank them by
-          real cultural fit.
+          Fit fills a festival.
         </p>
-        <button onClick={onDemo} className="cond press mt-8 w-full bg-[var(--ink)] py-5 text-[40px] text-[var(--paper)]">
-          Build the lineup
+        <p className="mt-5 max-w-md text-[17px] font-medium leading-snug">
+          Tell it who&apos;s coming. It ranks who to book and who to sponsor, and shows the evidence behind every pick.
+        </p>
+
+        <div className="mt-8 border-t-[3px] border-[var(--ink)] pt-4" aria-hidden>
+          <p className="label">Fit decides billing</p>
+          <div className="mt-3 flex flex-col items-start gap-[0.6cqw]">
+            <span className="cond text-[13cqw]">Khruangbin</span>
+            <span className="cond text-[9cqw]">Bonobo</span>
+            <span className="cond strike text-[5cqw]">Post Malone</span>
+          </div>
+        </div>
+
+        <button onClick={onDemo} className="cond press mt-8 w-full bg-[var(--ink)] py-5 text-[36px] text-[var(--paper)]">
+          Try the demo
         </button>
         <button
           onClick={onCustom}
           className="cond press mt-3 w-full border-[3px] border-[var(--ink)] py-4 text-[28px]"
         >
-          Set up your own event
+          Build your own
         </button>
       </div>
     </div>
