@@ -1,0 +1,17 @@
+node_modules/
+.next/
+out/
+build/
+.env
+.env.local
+.env.production
+secrets/
+.env*.local
+*.pem
+.vercel
+*.tsbuildinfo
+next-env.d.ts
+
+# Private working notes - never publish
+NOTES.md
+notes/
