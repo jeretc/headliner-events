@@ -12,7 +12,7 @@ export type Candidate = {
   why: string;
   signals: Signal[];
   caution?: string;
-  image: string;
+  image?: string;
 };
 
 export const event = {
