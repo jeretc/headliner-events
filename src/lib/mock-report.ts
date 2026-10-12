@@ -12,6 +12,7 @@ export type Candidate = {
   why: string;
   signals: Signal[];
   caution?: string;
+  generic?: { score: number; line: string };
   image?: string;
 };
 

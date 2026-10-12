@@ -83,6 +83,35 @@ export function Detail({
 
         <p className="mt-6 text-[19px] font-medium leading-snug">{c.why}</p>
 
+        {c.generic && (
+          <div className="mt-8 border-t-[3px] border-[var(--ink)] pt-4">
+            <p className="label">Fame vs fit</p>
+            <div className="mt-3 grid grid-cols-2 gap-3">
+              <div className="border-[3px] border-[var(--ink)] px-3 py-3">
+                <p className="label">Generic LLM</p>
+                <p className="cond mt-1 text-[56px]">{c.generic.score}</p>
+                <p className="mt-1 text-[14px] font-medium leading-snug">{c.generic.line}</p>
+              </div>
+              <div className="bg-[var(--ink)] px-3 py-3 text-[var(--paper)]">
+                <p className="label text-[var(--ground)]">With Qloo</p>
+                <p className="cond mt-1 text-[56px]">{c.fit}</p>
+                <p className="mt-1 text-[14px] font-medium leading-snug">Fit with this exact audience.</p>
+              </div>
+            </div>
+            {c.generic.score >= 75 && c.fit < 50 && (
+              <p className="mt-3 text-[16px] font-bold leading-snug">
+                Looks like a safe hit. Doesn&apos;t fit this crowd.
+              </p>
+            )}
+            {c.generic.score < 65 && c.fit >= 80 && (
+              <p className="mt-3 text-[16px] font-bold leading-snug">
+                Easy to overlook on fame. This crowd&apos;s taste points straight at it.
+              </p>
+            )}
+            <p className="label mt-3 text-[var(--ink)]/60">Generic answer is simulated until the Claude call is wired</p>
+          </div>
+        )}
+
         <p className="label mb-3 mt-8 border-t-[3px] border-[var(--ink)] pt-4">Evidence</p>
         <ul className="flex flex-col gap-5">
           {c.signals.map((s) => (

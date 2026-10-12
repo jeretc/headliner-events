@@ -67,10 +67,29 @@ function mockCandidate(e: Entry): Candidate {
   };
 }
 
+// PLACEHOLDER: what a generic LLM would say from fame alone. Replaced by a real Claude call
+// that sees the same shortlist but no Qloo data.
+const demoGeneric: Record<string, { score: number; line: string }> = {
+  khruangbin: { score: 58, line: "Respected indie act, but smaller than the usual festival headliner." },
+  bonobo: { score: 55, line: "Solid electronic name, a bit niche for a main stage." },
+  "billie eilish": { score: 96, line: "Huge global star and a guaranteed crowd-puller." },
+  "post malone": { score: 94, line: "Chart-topping crossover star with enormous appeal." },
+  lululemon: { score: 78, line: "Premium lifestyle brand with strong reach." },
+  "red bull": { score: 90, line: "The default festival sponsor: big, proven, everywhere." },
+  "harley-davidson": { score: 74, line: "Iconic heritage brand with a loyal following." },
+};
+
+function withGeneric(c: Candidate): Candidate {
+  const g = demoGeneric[c.name.toLowerCase()];
+  if (g) return { ...c, generic: g };
+  const score = 40 + ((hash(c.name.toLowerCase()) >> 5) % 55);
+  return { ...c, generic: { score, line: "Broadly popular choice, judged on general fame." } };
+}
+
 // Single entry point for the UI. Swap the body for real Qloo calls later.
 export async function getLineup(request: LineupRequest): Promise<LineupResult> {
   const demoByName = new Map(demoCandidates.map((c) => [c.name.toLowerCase(), c]));
-  const all = request.entries.map((e) => demoByName.get(e.name.toLowerCase()) ?? mockCandidate(e));
+  const all = request.entries.map((e) => withGeneric(demoByName.get(e.name.toLowerCase()) ?? mockCandidate(e)));
   const sorted = [
     ...all.filter((c) => c.kind === "headliner").sort((a, b) => b.fit - a.fit),
     ...all.filter((c) => c.kind === "sponsor").sort((a, b) => b.fit - a.fit),
