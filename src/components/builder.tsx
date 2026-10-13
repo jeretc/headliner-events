@@ -125,7 +125,7 @@ function ScrollRail({ scrollRef }: { scrollRef: RefObject<HTMLDivElement | null>
     <div
       ref={trackRef}
       aria-hidden
-      className="absolute right-2 top-1/2 z-20 h-[45%] w-[7px] -translate-y-1/2 touch-none bg-[var(--ink)]/20"
+      className="absolute right-1 top-1/2 z-20 h-[60%] w-[7px] -translate-y-1/2 touch-none bg-[var(--ink)]/20 md:-right-6"
       onPointerDown={(e) => {
         const track = trackRef.current;
         if (!track) return;
@@ -192,7 +192,7 @@ export function Builder({
         </button>
       </div>
 
-      <div className="flex-1 px-5 pb-8 pt-6 md:pb-6 md:pt-4">
+      <div className="flex-1 pb-8 pl-5 pr-8 pt-6 md:px-5 md:pb-6 md:pt-4">
         {example && (
           <div className="mb-6 bg-[var(--ink)] px-4 py-4 text-[var(--paper)]">
             <p className="label text-[var(--ground)]">Example event</p>
