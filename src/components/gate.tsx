@@ -8,6 +8,7 @@ export function Gate({ onDemo, onCustom }: { onDemo: () => void; onCustom: () =>
       </div>
 
       <div className="mt-auto">
+        <p className="label mb-2">For festivals, conferences and brand events</p>
         <h1 className="cond text-[22cqw]">Headliner</h1>
         <p className="cond mt-4 text-[9cqw] leading-[0.95]">
           Fame fills a poster.

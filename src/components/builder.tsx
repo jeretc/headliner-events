@@ -88,10 +88,12 @@ function Chips({ names, onRemove }: { names: string[]; onRemove: (name: string) 
 
 export function Builder({
   initial,
+  example,
   onRun,
   onBack,
 }: {
   initial: LineupRequest;
+  example: boolean;
   onRun: (r: LineupRequest) => void;
   onBack: () => void;
 }) {
@@ -123,7 +125,16 @@ export function Builder({
       </div>
 
       <div className="px-5 pb-40 pt-6">
-        <h1 className="cond text-[44px]">Your event</h1>
+        {example && (
+          <div className="mb-6 bg-[var(--ink)] px-4 py-4 text-[var(--paper)]">
+            <p className="label text-[var(--ground)]">Example event</p>
+            <p className="mt-1 text-[16px] font-medium leading-snug">
+              This is what an organizer enters: who the crowd loves, and who they&apos;re considering. Press Build the
+              lineup to see the agent rank them. You can edit anything first.
+            </p>
+          </div>
+        )}
+        <h1 className="cond text-[44px]">{example ? "Skyline Festival" : "Your event"}</h1>
         <p className="label mt-2">Tell the agent who&apos;s coming and who&apos;s in the running</p>
 
         <section className="mt-8">

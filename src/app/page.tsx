@@ -16,9 +16,11 @@ export default function Home() {
   const [result, setResult] = useState<LineupResult | null>(null);
   const [tab, setTab] = useState<Tab>("lineup");
   const [openId, setOpenId] = useState<string | null>(null);
+  const [isExample, setIsExample] = useState(false);
 
   const run = useCallback(async (r: LineupRequest) => {
     setRequest(r);
+    setIsExample(false);
     setResult(await getLineup(r));
     setTab("lineup");
     setPhase("running");
@@ -26,10 +28,23 @@ export default function Home() {
   const finish = useCallback(() => setPhase("done"), []);
 
   if (phase === "gate") {
-    return <Gate onDemo={() => run(demoRequest)} onCustom={() => setPhase("builder")} />;
+    return (
+      <Gate
+        onDemo={() => {
+          setRequest(demoRequest);
+          setIsExample(true);
+          setPhase("builder");
+        }}
+        onCustom={() => {
+          setRequest(blankRequest);
+          setIsExample(false);
+          setPhase("builder");
+        }}
+      />
+    );
   }
   if (phase === "builder") {
-    return <Builder initial={request} onRun={run} onBack={() => setPhase("gate")} />;
+    return <Builder initial={request} example={isExample} onRun={run} onBack={() => setPhase("gate")} />;
   }
   if (!result) return null;
   if (phase === "running") return <Trace steps={result.steps} onDone={finish} />;

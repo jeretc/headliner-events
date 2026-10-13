@@ -45,6 +45,9 @@ export function Lineup({ result, onOpen }: { result: LineupResult; onOpen: (id: 
       <p className="label mt-3">
         {result.request.seeds.length} audience favourites · {result.candidates.length} candidates
       </p>
+      <p className="mx-auto mt-3 max-w-md text-[15px] font-medium leading-snug">
+        Scored against what this crowd loves: {result.request.seeds.map((s) => s.name).join(", ")}.
+      </p>
 
       {headliners.length > 0 && (
         <div className="mt-8 border-t-[3px] border-[var(--ink)] pt-8">
@@ -99,40 +102,69 @@ export function Lineup({ result, onOpen }: { result: LineupResult; onOpen: (id: 
   );
 }
 
+const compareGroups = [
+  {
+    kind: "headliner" as const,
+    title: "Headliners",
+    cols: [
+      { label: "Artist affinity", short: "Art" },
+      { label: "Brand overlap", short: "Brand" },
+      { label: "Lifestyle fit", short: "Life" },
+    ],
+  },
+  {
+    kind: "sponsor" as const,
+    title: "Sponsors",
+    cols: [
+      { label: "Brand overlap", short: "Brand" },
+      { label: "Lifestyle fit", short: "Life" },
+      { label: "Artist affinity", short: "Art" },
+    ],
+  },
+];
+
 export function Compare({ result, onOpen }: { result: LineupResult; onOpen: (id: string) => void }) {
-  const cols = ["Artist affinity", "Brand overlap", "Lifestyle fit"];
   const grid = "grid-cols-[minmax(0,1fr)_repeat(3,34px)_38px]";
   return (
     <section className="px-5 pb-10 pt-6">
       <h1 className="cond text-[44px]">Side by side</h1>
-      <p className="label mt-2">Three signals, every candidate</p>
-      <div className={`mt-6 grid ${grid} items-end gap-x-1.5 border-b-[3px] border-[var(--ink)] pb-2`}>
-        <span />
-        {["Art", "Brand", "Life"].map((h) => (
-          <span key={h} className="label text-center">
-            {h}
-          </span>
-        ))}
-        <span className="label text-center">Fit</span>
-      </div>
-      {result.candidates.map((c) => (
-        <button
-          key={c.id}
-          onClick={() => onOpen(c.id)}
-          className={`press grid w-full ${grid} items-center gap-x-1.5 border-b border-[var(--ink)]/40 py-3 text-left`}
-        >
-          <span className={`cond text-[22px] sm:text-[26px] ${isAvoid(c) ? "strike" : ""}`}>{c.name}</span>
-          {cols.map((col) => {
-            const s = c.signals.find((x) => x.label === col);
-            return (
-              <span key={col} className="text-center text-[15px] font-bold tabular-nums">
-                {s ? s.strength : "-"}
-              </span>
-            );
-          })}
-          <span className="cond text-center text-[26px]">{c.fit}</span>
-        </button>
-      ))}
+      <p className="label mt-2">Three signals, every candidate, ranked within each group</p>
+      {compareGroups.map((g) => {
+        const rows = result.candidates.filter((c) => c.kind === g.kind);
+        if (!rows.length) return null;
+        return (
+          <div key={g.kind} className="mt-8">
+            <h2 className="cond text-[32px]">{g.title}</h2>
+            <div className={`mt-3 grid ${grid} items-end gap-x-1.5 border-b-[3px] border-[var(--ink)] pb-2`}>
+              <span />
+              {g.cols.map((col) => (
+                <span key={col.label} className="label text-center">
+                  {col.short}
+                </span>
+              ))}
+              <span className="label text-center">Fit</span>
+            </div>
+            {rows.map((c) => (
+              <button
+                key={c.id}
+                onClick={() => onOpen(c.id)}
+                className={`press grid w-full ${grid} items-center gap-x-1.5 border-b border-[var(--ink)]/40 py-3 text-left`}
+              >
+                <span className={`cond text-[22px] sm:text-[26px] ${isAvoid(c) ? "strike" : ""}`}>{c.name}</span>
+                {g.cols.map((col) => {
+                  const sig = c.signals.find((x) => x.label === col.label);
+                  return (
+                    <span key={col.label} className="text-center text-[15px] font-bold tabular-nums">
+                      {sig ? sig.strength : "-"}
+                    </span>
+                  );
+                })}
+                <span className="cond text-center text-[26px]">{c.fit}</span>
+              </button>
+            ))}
+          </div>
+        );
+      })}
     </section>
   );
 }

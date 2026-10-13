@@ -9,10 +9,10 @@ export function Trace({ steps, onDone }: { steps: Step[]; onDone: () => void }) 
 
   useEffect(() => {
     if (n >= steps.length) {
-      const t = setTimeout(onDone, 700);
+      const t = setTimeout(onDone, 1200);
       return () => clearTimeout(t);
     }
-    const t = setTimeout(() => setN((x) => x + 1), 170);
+    const t = setTimeout(() => setN((x) => x + 1), 400);
     return () => clearTimeout(t);
   }, [n, steps.length, onDone]);
 
