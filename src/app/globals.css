@@ -167,7 +167,26 @@ button:not(:disabled) { cursor: pointer; }
 .gate-root { min-height: 100vh; min-height: 100dvh; }
 .gate-gap { margin-top: clamp(0.9rem, 3.4dvh, 2rem); }
 .gate-gap-sm { margin-top: clamp(0.5rem, 1.8dvh, 1.25rem); }
-@media (max-height: 800px) { .gate-teaser { display: none; } }
+/* First page keeps its full-size design and just sits within the visible screen (dvh). Only very short screens
+   (small phones with the browser bars showing) shrink the type a little; nothing is ever hidden. */
+.gate-h1 { font-size: 22cqw; }
+.gate-tag { font-size: 9cqw; }
+.gate-p { font-size: 17px; }
+.gate-t1 { font-size: 13cqw; }
+.gate-t2 { font-size: 9cqw; }
+.gate-t3 { font-size: 5cqw; }
+.gate-b1 { font-size: 36px; }
+.gate-b2 { font-size: 28px; }
+@media (max-height: 690px) {
+  .gate-h1 { font-size: 16cqw; } .gate-tag { font-size: 7cqw; } .gate-p { font-size: 14px; line-height: 1.25; }
+  .gate-t1 { font-size: 9cqw; } .gate-t2 { font-size: 6.4cqw; } .gate-t3 { font-size: 3.8cqw; }
+  .gate-b1 { font-size: 28px; } .gate-b2 { font-size: 22px; } .gate-teaser { padding-top: 0.5rem; }
+}
+@media (max-height: 570px) {
+  .gate-h1 { font-size: 13cqw; } .gate-tag { font-size: 5.8cqw; } .gate-p { font-size: 12.5px; }
+  .gate-t1 { font-size: 7cqw; } .gate-t2 { font-size: 5cqw; } .gate-t3 { font-size: 3.3cqw; }
+  .gate-b1 { font-size: 24px; } .gate-b2 { font-size: 19px; }
+}
 @media (min-width: 768px) { .gate-bottom { padding-bottom: 4.5rem; } }
 button:disabled { cursor: not-allowed; }
 
