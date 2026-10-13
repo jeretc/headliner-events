@@ -2,15 +2,17 @@
 
 import { useCallback, useEffect, useRef } from "react";
 import type { Candidate } from "@/lib/mock-report";
-import { isAvoid } from "./report";
+import { guideTarget, isAvoid } from "./report";
 
 export function Detail({
   order,
   id,
+  guided,
   onChange,
 }: {
   order: Candidate[];
   id: string;
+  guided: boolean;
   onChange: (id: string | null) => void;
 }) {
   const idx = order.findIndex((c) => c.id === id);
@@ -85,6 +87,11 @@ export function Detail({
 
         {c.generic && (
           <div className="mt-8 border-t-[3px] border-[var(--ink)] pt-4">
+            {guided && guideTarget(order)?.id === c.id && (
+              <p className="mb-3 bg-[var(--ground)] px-3 py-2 text-[15px] font-bold leading-snug">
+                This is the point of Headliner: fame says one thing, Qloo&apos;s taste data says another.
+              </p>
+            )}
             <p className="label">Fame vs fit</p>
             <div className="mt-3 grid grid-cols-2 gap-3">
               <div className="border-[3px] border-[var(--ink)] px-3 py-3">

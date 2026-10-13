@@ -31,11 +31,63 @@ export function TopBar({ onRerun }: { onRerun: () => void }) {
   );
 }
 
-export function Lineup({ result, onOpen }: { result: LineupResult; onOpen: (id: string) => void }) {
+// The pick where Qloo and a generic answer disagree most: the best place to send a first-time viewer.
+export function guideTarget(candidates: Candidate[]) {
+  return candidates
+    .filter((c) => c.kind === "headliner")
+    .reduce<Candidate | null>((m, c) => (!m || c.fit < m.fit ? c : m), null);
+}
+
+function GuideStrip({ name, onDismiss }: { name: string; onDismiss: () => void }) {
+  return (
+    <div className="mb-8 bg-[var(--ink)] px-4 py-4 text-left text-[var(--paper)]">
+      <div className="flex items-start justify-between gap-3">
+        <p className="label text-[var(--ground)]">Guided example</p>
+        <button onClick={onDismiss} className="label press border-2 border-[var(--paper)] px-2 py-1">
+          Got it
+        </button>
+      </div>
+      <p className="mt-2 text-[16px] font-medium leading-snug">
+        You&apos;re looking at an example run. Here&apos;s what to try:
+      </p>
+      <ol className="mt-3 flex flex-col gap-2 text-[16px] font-medium leading-snug">
+        <li>
+          <span className="cond text-[22px] text-[var(--ground)]">1 </span>
+          Tap <strong>{name}</strong>. A huge name on fame, but struck through here. See why.
+        </li>
+        <li>
+          <span className="cond text-[22px] text-[var(--ground)]">2 </span>
+          Open <strong>Compare</strong> to see every pick side by side.
+        </li>
+        <li>
+          <span className="cond text-[22px] text-[var(--ground)]">3 </span>
+          Tap <strong>Edit</strong> to change the crowd and re-run, or go back and choose <strong>Plan my event</strong>{" "}
+          to try your own.
+        </li>
+      </ol>
+    </div>
+  );
+}
+
+export function Lineup({
+  result,
+  guided,
+  pulse,
+  onDismissGuide,
+  onOpen,
+}: {
+  result: LineupResult;
+  guided: boolean;
+  pulse: boolean;
+  onDismissGuide: () => void;
+  onOpen: (id: string) => void;
+}) {
+  const target = guideTarget(result.candidates);
   const headliners = result.candidates.filter((c) => c.kind === "headliner");
   const sponsors = result.candidates.filter((c) => c.kind === "sponsor");
   return (
     <section className="poster px-5 pb-10 pt-6 text-center">
+      {guided && target && <GuideStrip name={target.name} onDismiss={onDismissGuide} />}
       <p className="label">Recommended lineup</p>
       <h1 className="line mt-3">
         <span className="cond text-[17cqw]" style={{ ["--i" as string]: 0 }}>
@@ -61,7 +113,7 @@ export function Lineup({ result, onOpen }: { result: LineupResult; onOpen: (id: 
                 aria-label={`${c.name}, fit ${c.fit}. Open evidence`}
               >
                 <span
-                  className={`cond ${isAvoid(c) ? "strike" : ""}`}
+                  className={`cond ${isAvoid(c) ? "strike" : ""} ${pulse && target?.id === c.id ? "pulse" : ""}`}
                   style={{ fontSize: headlinerSize(c), ["--i" as string]: i + 1 }}
                 >
                   {c.name}

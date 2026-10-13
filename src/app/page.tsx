@@ -17,14 +17,21 @@ export default function Home() {
   const [tab, setTab] = useState<Tab>("lineup");
   const [openId, setOpenId] = useState<string | null>(null);
   const [isExample, setIsExample] = useState(false);
+  const [guideOpen, setGuideOpen] = useState(false);
+  const [pulseDone, setPulseDone] = useState(false);
 
-  const run = useCallback(async (r: LineupRequest) => {
+  const run = useCallback(
+    async (r: LineupRequest) => {
     setRequest(r);
+    setGuideOpen(isExample);
+    setPulseDone(false);
     setIsExample(false);
     setResult(await getLineup(r));
     setTab("lineup");
     setPhase("running");
-  }, []);
+    },
+    [isExample],
+  );
   const finish = useCallback(() => setPhase("done"), []);
 
   if (phase === "gate") {
@@ -53,12 +60,23 @@ export default function Home() {
     <div className="app-pad mx-auto min-h-screen max-w-2xl">
       <TopBar onRerun={() => setPhase("builder")} />
       <main>
-        {tab === "lineup" && <Lineup result={result} onOpen={setOpenId} />}
+        {tab === "lineup" && (
+          <Lineup
+            result={result}
+            guided={guideOpen}
+            pulse={guideOpen && !pulseDone}
+            onDismissGuide={() => setGuideOpen(false)}
+            onOpen={(id) => {
+              setPulseDone(true);
+              setOpenId(id);
+            }}
+          />
+        )}
         {tab === "compare" && <Compare result={result} onOpen={setOpenId} />}
         {tab === "audience" && <Audience result={result} />}
       </main>
       <TabBar tab={tab} onChange={setTab} />
-      {openId && <Detail order={result.candidates} id={openId} onChange={setOpenId} />}
+      {openId && <Detail order={result.candidates} id={openId} guided={guideOpen} onChange={setOpenId} />}
     </div>
   );
 }
