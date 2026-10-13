@@ -40,7 +40,7 @@ function Picker({
         }}
         placeholder={placeholder}
         autoComplete="off"
-        className="mt-2 w-full border-[3px] border-[var(--ink)] bg-transparent px-3 py-3 text-[18px] font-bold outline-none placeholder:font-medium placeholder:text-[var(--ink)]/55 focus:bg-[var(--paper)]"
+        className="mt-2 w-full border-[3px] border-[var(--ink)] bg-transparent px-3 py-3 text-[18px] font-bold md:py-2 outline-none placeholder:font-medium placeholder:text-[var(--ink)]/55 focus:bg-[var(--paper)]"
       />
       {typed && (
         <ul className="border-x-[3px] border-b-[3px] border-[var(--ink)] bg-[var(--paper)]">
@@ -73,7 +73,7 @@ function Chips({ names, onRemove }: { names: string[]; onRemove: (name: string) 
           <button
             onClick={() => onRemove(n)}
             aria-label={`Remove ${n}`}
-            className="cond press flex items-center gap-2 bg-[var(--ink)] px-3 py-2 text-[22px] text-[var(--paper)]"
+            className="cond press flex items-center gap-2 bg-[var(--ink)] px-3 py-2 text-[22px] md:py-1.5 md:text-[19px] text-[var(--paper)]"
           >
             {n}
             <span aria-hidden className="label text-[var(--ground)]">
@@ -124,7 +124,7 @@ export function Builder({
         </button>
       </div>
 
-      <div className="px-5 pb-40 pt-6">
+      <div className="px-5 pb-40 pt-6 md:pb-52 md:pt-4">
         {example && (
           <div className="mb-6 bg-[var(--ink)] px-4 py-4 text-[var(--paper)]">
             <p className="label text-[var(--ground)]">Example event</p>
@@ -134,10 +134,10 @@ export function Builder({
             </p>
           </div>
         )}
-        <h1 className="cond text-[44px]">{example ? "Skyline Festival" : "Your event"}</h1>
+        <h1 className="cond text-[44px] md:text-[36px]">{example ? "Skyline Festival" : "Your event"}</h1>
         <p className="label mt-2">Tell the agent who&apos;s coming and who&apos;s in the running</p>
 
-        <section className="mt-8">
+        <section className="mt-8 md:mt-5">
           <label htmlFor="event-name" className="label block">
             Event name
           </label>
@@ -146,30 +146,30 @@ export function Builder({
             placeholder="Name your event"
             value={eventName}
             onChange={(e) => setEventName(e.target.value)}
-            className="cond mt-2 w-full border-[3px] border-[var(--ink)] bg-transparent px-3 py-2 text-[34px] outline-none focus:bg-[var(--paper)]"
+            className="cond mt-2 w-full border-[3px] border-[var(--ink)] bg-transparent px-3 py-2 text-[34px] md:text-[28px] outline-none focus:bg-[var(--paper)]"
           />
         </section>
 
-        <section className="mt-8 border-t-[3px] border-[var(--ink)] pt-6">
-          <h2 className="cond text-[32px]">The crowd</h2>
+        <section className="mt-8 border-t-[3px] border-[var(--ink)] pt-6 md:mt-5 md:pt-4">
+          <h2 className="cond text-[32px] md:text-[26px]">The crowd</h2>
           <p className="mt-1 text-[15px] font-medium">What your attendees already love. Artists, brands, anything.</p>
-          <div className="mt-4">
+          <div className="mt-4 md:mt-3">
             <Picker label="Add a favourite" placeholder="Search artists and brands" kind="any" onAdd={addSeed} />
           </div>
           <Chips names={seeds.map((s) => s.name)} onRemove={(n) => setSeeds((s) => s.filter((x) => x.name !== n))} />
         </section>
 
-        <section className="mt-8 border-t-[3px] border-[var(--ink)] pt-6">
-          <h2 className="cond text-[32px]">Headliner candidates</h2>
-          <div className="mt-4">
+        <section className="mt-8 border-t-[3px] border-[var(--ink)] pt-6 md:mt-5 md:pt-4">
+          <h2 className="cond text-[32px] md:text-[26px]">Headliner candidates</h2>
+          <div className="mt-4 md:mt-3">
             <Picker label="Add an artist" placeholder="Search artists" kind="artist" onAdd={addEntry("headliner")} />
           </div>
           <Chips names={headliners.map((e) => e.name)} onRemove={removeEntry} />
         </section>
 
-        <section className="mt-8 border-t-[3px] border-[var(--ink)] pt-6">
-          <h2 className="cond text-[32px]">Sponsor candidates</h2>
-          <div className="mt-4">
+        <section className="mt-8 border-t-[3px] border-[var(--ink)] pt-6 md:mt-5 md:pt-4">
+          <h2 className="cond text-[32px] md:text-[26px]">Sponsor candidates</h2>
+          <div className="mt-4 md:mt-3">
             <Picker label="Add a brand" placeholder="Search brands" kind="brand" onAdd={addEntry("sponsor")} />
           </div>
           <Chips names={sponsors.map((e) => e.name)} onRemove={removeEntry} />
@@ -181,11 +181,11 @@ export function Builder({
       </div>
 
       <div className="fixed inset-x-0 bottom-0 z-10 bg-[var(--ground)]">
-        <div className="safe-bottom mx-auto max-w-2xl px-5 pt-3">
+        <div className="gate-bottom mx-auto max-w-2xl px-5 pt-3">
           <button
             disabled={!ready}
             onClick={() => onRun({ eventName: eventName.trim(), seeds, entries })}
-            className="cond press w-full bg-[var(--ink)] py-4 text-[36px] text-[var(--paper)] disabled:opacity-40"
+            className="cond press w-full bg-[var(--ink)] py-4 text-[36px] text-[var(--paper)] disabled:opacity-40 md:py-3 md:text-[30px]"
           >
             Build the lineup
           </button>

@@ -164,3 +164,4 @@ button:not(:disabled) { cursor: pointer; }
 /* Gate: on desktop leave room so an auto-hiding OS taskbar doesn't cover the buttons */
 .gate-bottom { padding-bottom: max(1.5rem, env(safe-area-inset-bottom)); }
 @media (min-width: 768px) { .gate-bottom { padding-bottom: 4.5rem; } }
+button:disabled { cursor: not-allowed; }
