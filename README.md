@@ -75,8 +75,8 @@ Headliner turns that into the screen like this:
 Requires Node.js 22.19 or newer.
 
 ```bash
-git clone https://github.com/jeretc/qloo-agentic-hackathon.git
-cd qloo-agentic-hackathon
+git clone https://github.com/jeretc/headliner-events.git
+cd headliner-events
 cp .env.example .env.local   # then add your own keys
 npm install
 npm run dev
