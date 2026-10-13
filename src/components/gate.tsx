@@ -2,7 +2,7 @@
 
 export function Gate({ onDemo, onCustom }: { onDemo: () => void; onCustom: () => void }) {
   return (
-    <div className="poster safe-top safe-bottom mx-auto flex min-h-screen max-w-2xl flex-col px-5">
+    <div className="poster safe-top gate-bottom mx-auto flex min-h-screen max-w-2xl flex-col px-5">
       <div className="flex items-center justify-between">
         <span className="label">Powered by Qloo&apos;s taste graph</span>
       </div>
