@@ -1,7 +1,8 @@
 import { getCache } from "@vercel/functions";
 
 // Server-only: what a generic LLM says from fame alone (no Qloo data), for the fame-vs-fit contrast.
-const MODEL = "gemini-2.5-flash";
+// Tried in order; each model has its own free-tier quota, so a 429 on one falls through to the next.
+const MODELS = ["gemini-2.5-flash", "gemini-3.1-flash-lite"];
 const cache = new Map<string, Record<string, { score: number; line: string }>>();
 
 export const genericConfigured = () => Boolean(process.env.GEMINI_API_KEY);
@@ -31,21 +32,30 @@ Sponsors: ${sponsors.join(", ") || "none"}.`;
       required: ["name", "score", "line"],
     },
   };
-  const r = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${MODEL}:generateContent`, {
-    method: "POST",
-    headers: { "x-goog-api-key": process.env.GEMINI_API_KEY ?? "", "Content-Type": "application/json" },
-    body: JSON.stringify({
-      contents: [{ parts: [{ text: prompt }] }],
-      generationConfig: {
-        responseMimeType: "application/json",
-        responseSchema: schema,
-        temperature: 0,
-        seed: 42,
-        thinkingConfig: { thinkingBudget: 0 },
-      },
-    }),
+  const body = JSON.stringify({
+    contents: [{ parts: [{ text: prompt }] }],
+    generationConfig: {
+      responseMimeType: "application/json",
+      responseSchema: schema,
+      temperature: 0,
+      seed: 42,
+      thinkingConfig: { thinkingBudget: 0 },
+    },
   });
-  if (!r.ok) throw new Error(`Gemini ${r.status}`);
+  let r: Response | null = null;
+  for (const model of MODELS) {
+    for (let attempt = 0; attempt < 2; attempt++) {
+      r = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`, {
+        method: "POST",
+        headers: { "x-goog-api-key": process.env.GEMINI_API_KEY ?? "", "Content-Type": "application/json" },
+        body,
+      });
+      if (r.status !== 503) break; // 429 (quota) will not clear in seconds: go straight to the next model
+      await new Promise((res) => setTimeout(res, 1500));
+    }
+    if (r && r.ok) break;
+  }
+  if (!r || !r.ok) throw new Error(`Gemini ${r?.status}`);
   const j = (await r.json()) as { candidates?: { content?: { parts?: { text?: string }[] } }[] };
   const text = j.candidates?.[0]?.content?.parts?.[0]?.text;
   const rows = JSON.parse(text ?? "[]") as { name: string; score: number; line: string }[];

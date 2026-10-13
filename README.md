@@ -120,7 +120,9 @@ Next.js (App Router), React, TypeScript, Tailwind CSS, shadcn/ui, deployed on Ve
 
 ## Live demo
 
-Link will be added at submission.
+https://headliner-events.vercel.app
+
+The app is free to use and needs no sign-in. Rankings use a shared Qloo quota, so each visitor is limited to about 12 runs every 10 minutes.
 
 ## License
 
