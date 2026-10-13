@@ -114,7 +114,7 @@ export function Lineup({
       {headliners.length > 0 && (
         <div className="mt-8 border-t-[3px] border-[var(--ink)] pt-8">
           <p className="label mb-5">Headline</p>
-          <div className="flex flex-col items-center gap-[1.6cqw]">
+          <div className="flex flex-col items-center gap-[3cqw]">
             {headliners.map((c, i) => (
               <button
                 key={c.id}
@@ -137,7 +137,7 @@ export function Lineup({
       {sponsors.length > 0 && (
         <div className="mt-8 border-t-[3px] border-[var(--ink)] pt-8">
           <p className="label mb-5">Presented by</p>
-          <div className="flex flex-wrap items-baseline justify-center gap-x-[3cqw] gap-y-[2cqw]">
+          <div className="flex flex-wrap items-baseline justify-center gap-x-[3cqw] gap-y-[3cqw]">
             {sponsors.map((c, i) => (
               <button
                 key={c.id}

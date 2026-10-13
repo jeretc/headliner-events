@@ -101,6 +101,7 @@ export default function Home() {
 
   if (phase === "gate") {
     return (
+      <div key="gate" className="screen">
       <Gate
         onDemo={() => {
           setRequest(demoRequest);
@@ -109,10 +110,12 @@ export default function Home() {
         }}
         onCustom={planOwn}
       />
+      </div>
     );
   }
   if (phase === "builder") {
     return (
+      <div key="builder" className="screen">
       <Builder
         initial={request}
         example={isExample}
@@ -121,6 +124,7 @@ export default function Home() {
         onHome={goHome}
         onBack={() => (window.history.state ? window.history.back() : apply({ phase: "gate", openId: null }))}
       />
+      </div>
     );
   }
   if (!result) return null;
@@ -130,7 +134,7 @@ export default function Home() {
   }
 
   return (
-    <div className="app-pad mx-auto min-h-screen max-w-2xl">
+    <div key="results" className="screen app-pad mx-auto min-h-screen max-w-2xl">
       <TopBar onRerun={() => push({ phase: "builder", openId: null })} onHome={goHome} />
       <main>
         {tab === "lineup" && (

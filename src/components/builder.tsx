@@ -229,8 +229,11 @@ export function Builder({
           />
         </section>
 
-        <section className="mt-8 border-t-[3px] border-[var(--ink)] pt-6 md:mt-5 md:pt-4">
-          <h2 className="cond text-[32px] md:text-[26px]">The crowd</h2>
+        <section className="mt-10 border-t-[3px] border-[var(--ink)] pt-6 md:mt-7 md:pt-5">
+          <h2 className="cond flex items-baseline gap-3 text-[32px] md:text-[26px]">
+            <span className="text-[var(--paper)]">1</span>The crowd
+            <span className="label ml-auto">{seeds.length} added</span>
+          </h2>
           <p className="mt-1 text-[15px] font-medium">What your attendees already love. Artists, brands, anything.</p>
           <div className="mt-4 md:mt-3">
             <Picker label="Add a favourite" placeholder="Search artists and brands" kind="any" onAdd={addSeed} />
@@ -238,16 +241,22 @@ export function Builder({
           <Chips names={seeds.map((s) => s.name)} onRemove={(n) => setSeeds((s) => s.filter((x) => x.name !== n))} />
         </section>
 
-        <section className="mt-8 border-t-[3px] border-[var(--ink)] pt-6 md:mt-5 md:pt-4">
-          <h2 className="cond text-[32px] md:text-[26px]">Headliner candidates</h2>
+        <section className="mt-10 border-t-[3px] border-[var(--ink)] pt-6 md:mt-7 md:pt-5">
+          <h2 className="cond flex items-baseline gap-3 text-[32px] md:text-[26px]">
+            <span className="text-[var(--paper)]">2</span>Headliner candidates
+            <span className="label ml-auto">{headliners.length} added</span>
+          </h2>
           <div className="mt-4 md:mt-3">
             <Picker label="Add an artist" placeholder="Search artists" kind="artist" onAdd={addEntry("headliner")} />
           </div>
           <Chips names={headliners.map((e) => e.name)} onRemove={removeEntry} />
         </section>
 
-        <section className="mt-8 border-t-[3px] border-[var(--ink)] pt-6 md:mt-5 md:pt-4">
-          <h2 className="cond text-[32px] md:text-[26px]">Sponsor candidates</h2>
+        <section className="mt-10 border-t-[3px] border-[var(--ink)] pt-6 md:mt-7 md:pt-5">
+          <h2 className="cond flex items-baseline gap-3 text-[32px] md:text-[26px]">
+            <span className="text-[var(--paper)]">3</span>Sponsor candidates
+            <span className="label ml-auto">{sponsors.length} added</span>
+          </h2>
           <div className="mt-4 md:mt-3">
             <Picker label="Add a brand" placeholder="Search brands" kind="brand" onAdd={addEntry("sponsor")} />
           </div>

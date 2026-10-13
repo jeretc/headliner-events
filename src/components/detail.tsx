@@ -124,10 +124,10 @@ export function Detail({
           {c.signals.map((s) => (
             <li key={s.label}>
               <div className="flex items-baseline justify-between">
-                <span className="text-[17px] font-bold">{s.label}</span>
-                <span className="cond text-[28px]">{s.strength}</span>
+                <span className="text-[18px] font-bold">{s.label}</span>
+                <span className="cond text-[36px]">{s.strength}</span>
               </div>
-              <div className="mt-1 h-[14px] bg-[var(--ink)]/15">
+              <div className="mt-1.5 h-[22px] bg-[var(--ink)]/15">
                 <div className="bar-fill h-full bg-[var(--ink)]" style={{ width: `${s.strength}%` }} />
               </div>
               <p className="mt-1.5 text-[15px] text-[var(--ink)]/75">{s.note}</p>

@@ -187,3 +187,8 @@ button:disabled { cursor: not-allowed; }
 /* Visible keyboard focus */
 button:focus-visible, input:focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; }
 .sheet button:focus-visible, .sheet input:focus-visible { outline-color: var(--ink); }
+
+/* Screen change: opacity-only fade (no transform, so fixed children keep the viewport as their frame) */
+.screen { animation: screenfade .35s ease both; }
+@keyframes screenfade { from { opacity: 0; } to { opacity: 1; } }
+@media (prefers-reduced-motion: reduce) { .screen { animation: none; } }
