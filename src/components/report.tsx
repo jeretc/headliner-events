@@ -17,10 +17,12 @@ function sponsorSize(c: Candidate) {
   return `${(3 + 6.5 * (c.fit / 100) * (isAvoid(c) ? 0.6 : 1)).toFixed(2)}cqw`;
 }
 
-export function TopBar({ onRerun }: { onRerun: () => void }) {
+export function TopBar({ onRerun, onHome }: { onRerun: () => void; onHome: () => void }) {
   return (
     <header className="safe-top flex items-center justify-between px-5 pb-1">
-      <span className="cond text-[22px]">Headliner</span>
+      <button onClick={onHome} aria-label="Headliner, back to the first page" className="cond press text-[22px]">
+        Headliner
+      </button>
       <div className="flex items-center gap-2">
         <span className="label whitespace-nowrap border-2 border-[var(--ink)] px-2 py-1">
           <span className="hidden sm:inline">Placeholder data</span>

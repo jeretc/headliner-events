@@ -157,12 +157,14 @@ export function Builder({
   error,
   onRun,
   onBack,
+  onHome,
 }: {
   initial: LineupRequest;
   example: boolean;
   error?: string | null;
   onRun: (r: LineupRequest) => void;
   onBack: () => void;
+  onHome: () => void;
 }) {
   const [eventName, setEventName] = useState(initial.eventName);
   const [seeds, setSeeds] = useState<Seed[]>(initial.seeds);
@@ -188,7 +190,9 @@ export function Builder({
     <div className="relative mx-auto h-full max-w-2xl">
     <div ref={scrollRef} className="builder-scroll flex h-full flex-col overflow-y-auto">
       <div className="safe-top flex items-center justify-between px-5 pb-1">
-        <span className="cond text-[22px]">Headliner</span>
+        <button onClick={onHome} aria-label="Headliner, back to the first page" className="cond press text-[22px]">
+          Headliner
+        </button>
         <button onClick={onBack} className="label press border-2 border-[var(--ink)] px-3 py-2">
           Back
         </button>

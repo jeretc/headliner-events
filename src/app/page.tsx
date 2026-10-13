@@ -89,6 +89,10 @@ export default function Home() {
     if ((window.history.state as Nav | null)?.openId) window.history.back();
     else apply({ phase: "done", openId: null });
   };
+  const goHome = () => {
+    setIsExample(false);
+    push({ phase: "gate", openId: null });
+  };
   const planOwn = () => {
     setRequest(blankRequest);
     setIsExample(false);
@@ -114,6 +118,7 @@ export default function Home() {
         example={isExample}
         error={error}
         onRun={run}
+        onHome={goHome}
         onBack={() => (window.history.state ? window.history.back() : apply({ phase: "gate", openId: null }))}
       />
     );
@@ -126,7 +131,7 @@ export default function Home() {
 
   return (
     <div className="app-pad mx-auto min-h-screen max-w-2xl">
-      <TopBar onRerun={() => push({ phase: "builder", openId: null })} />
+      <TopBar onRerun={() => push({ phase: "builder", openId: null })} onHome={goHome} />
       <main>
         {tab === "lineup" && (
           <Lineup
