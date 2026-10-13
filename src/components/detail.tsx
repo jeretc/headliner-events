@@ -8,11 +8,13 @@ export function Detail({
   order,
   id,
   guided,
+  live,
   onChange,
 }: {
   order: Candidate[];
   id: string;
   guided: boolean;
+  live?: boolean;
   onChange: (id: string | null) => void;
 }) {
   const idx = order.findIndex((c) => c.id === id);
@@ -102,7 +104,7 @@ export function Detail({
               <div className="bg-[var(--ink)] px-3 py-3 text-[var(--paper)]">
                 <p className="label text-[var(--ground)]">With Qloo</p>
                 <p className="cond mt-1 text-[56px]">{c.fit}</p>
-                <p className="mt-1 text-[14px] font-medium leading-snug">Fit with this exact audience.</p>
+                <p className="mt-1 text-[14px] font-medium leading-snug">Fit for this exact audience, relative to your shortlist.</p>
               </div>
             </div>
             {c.generic.score >= 75 && c.fit < 50 && (
@@ -115,11 +117,11 @@ export function Detail({
                 Easy to overlook on fame. This crowd&apos;s taste points straight at it.
               </p>
             )}
-            <p className="label mt-3 text-[var(--ink)]/60">Generic answer is simulated until the Claude call is wired</p>
+            <p className="label mt-3 text-[var(--ink)]/60">Generic answer: an LLM using fame and general knowledge only, no Qloo data</p>
           </div>
         )}
 
-        <p className="label mb-3 mt-8 border-t-[3px] border-[var(--ink)] pt-4">Evidence</p>
+        <p className="label mb-3 mt-8 border-t-[3px] border-[var(--ink)] pt-4">Evidence · bars are relative to the strongest link</p>
         <ul className="flex flex-col gap-5">
           {c.signals.map((s) => (
             <li key={s.label}>
@@ -142,7 +144,7 @@ export function Detail({
           </div>
         )}
 
-        <p className="label mt-10 text-[var(--ink)]/60">Source: Qloo taste graph (mock data)</p>
+        <p className="label mt-10 text-[var(--ink)]/60">Source: Qloo taste graph{live ? "" : " (mock data)"}</p>
       </div>
     </div>
   );

@@ -24,7 +24,7 @@ export function Gate({ onDemo, onCustom }: { onDemo: () => void; onCustom: () =>
           <div className="mt-3 flex flex-col items-start gap-[0.6cqw]">
             <span className="cond text-[13cqw]">Khruangbin</span>
             <span className="cond text-[9cqw]">Bonobo</span>
-            <span className="cond strike text-[5cqw]">Post Malone</span>
+            <span className="cond strike text-[5cqw]">Metallica</span>
           </div>
         </div>
 

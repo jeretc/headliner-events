@@ -8,6 +8,7 @@ export type Candidate = {
   name: string;
   kind: "headliner" | "sponsor";
   fit: number;
+  affinity?: number;
   verdict: string;
   why: string;
   signals: Signal[];

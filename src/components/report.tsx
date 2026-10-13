@@ -17,7 +17,7 @@ function sponsorSize(c: Candidate) {
   return `${(3 + 6.5 * (c.fit / 100) * (isAvoid(c) ? 0.6 : 1)).toFixed(2)}cqw`;
 }
 
-export function TopBar({ onRerun, onHome }: { onRerun: () => void; onHome: () => void }) {
+export function TopBar({ onRerun, onHome, live }: { onRerun: () => void; onHome: () => void; live?: boolean }) {
   return (
     <header className="safe-top flex items-center justify-between px-5 pb-1">
       <button onClick={onHome} aria-label="Headliner, back to the first page" className="cond press text-[22px]">
@@ -25,8 +25,14 @@ export function TopBar({ onRerun, onHome }: { onRerun: () => void; onHome: () =>
       </button>
       <div className="flex items-center gap-2">
         <span className="label whitespace-nowrap border-2 border-[var(--ink)] px-2 py-1">
-          <span className="hidden sm:inline">Placeholder data</span>
-          <span className="sm:hidden">Mock data</span>
+          {live ? (
+            "Qloo data"
+          ) : (
+            <>
+              <span className="hidden sm:inline">Placeholder data</span>
+              <span className="sm:hidden">Mock data</span>
+            </>
+          )}
         </span>
         <button onClick={onRerun} className="label press bg-[var(--ink)] px-3 py-[7px] text-[var(--paper)]">
           Edit
@@ -43,10 +49,10 @@ export function guideTarget(candidates: Candidate[]) {
     .reduce<Candidate | null>((m, c) => (!m || c.fit < m.fit ? c : m), null);
 }
 
-function GuideStrip({ name, onDismiss }: { name: string; onDismiss: () => void }) {
+function GuideStrip({ name, struck, onDismiss }: { name: string; struck: boolean; onDismiss: () => void }) {
   const steps = [
     <>
-      Tap <strong>{name}</strong>: big on fame, struck through here. See why.
+      Tap <strong>{name}</strong>: {struck ? "big name, struck through here" : "the weakest fit of the headliners"}. See why.
     </>,
     <>
       Open <strong>Compare</strong> for every pick side by side.
@@ -97,7 +103,7 @@ export function Lineup({
   const sponsors = result.candidates.filter((c) => c.kind === "sponsor");
   return (
     <section className="poster px-5 pb-10 pt-6 text-center">
-      {guided && target && <GuideStrip name={target.name} onDismiss={onDismissGuide} />}
+      {guided && target && <GuideStrip name={target.name} struck={isAvoid(target)} onDismiss={onDismissGuide} />}
       <p className="label">Recommended lineup</p>
       <h1 className="line mt-3">
         <span className="cond text-[17cqw]" style={{ ["--i" as string]: 0 }}>
@@ -105,11 +111,16 @@ export function Lineup({
         </span>
       </h1>
       <p className="label mt-3">
-        {result.request.seeds.length} audience favourites · {result.candidates.length} candidates
+        {result.request.seeds.length} audience favourite{result.request.seeds.length === 1 ? "" : "s"} · {result.candidates.length} candidate{result.candidates.length === 1 ? "" : "s"}
       </p>
       <p className="mx-auto mt-3 max-w-md text-[15px] font-medium leading-snug">
         Scored against what this crowd loves: {result.request.seeds.map((s) => s.name).join(", ")}.
       </p>
+      {!!result.skipped?.length && (
+        <p className="mx-auto mt-3 max-w-md border-2 border-[var(--ink)] px-3 py-2 text-[14px] font-bold leading-snug">
+          Not found in Qloo, skipped: {result.skipped.join(", ")}. Check the spelling, or that it is in the right box (artists vs brands).
+        </p>
+      )}
 
       {headliners.length > 0 && (
         <div className="mt-8 border-t-[3px] border-[var(--ink)] pt-8">
@@ -184,32 +195,16 @@ export function Lineup({
 }
 
 const compareGroups = [
-  {
-    kind: "headliner" as const,
-    title: "Headliners",
-    cols: [
-      { label: "Artist affinity", short: "Art" },
-      { label: "Brand overlap", short: "Brand" },
-      { label: "Lifestyle fit", short: "Life" },
-    ],
-  },
-  {
-    kind: "sponsor" as const,
-    title: "Sponsors",
-    cols: [
-      { label: "Brand overlap", short: "Brand" },
-      { label: "Lifestyle fit", short: "Life" },
-      { label: "Artist affinity", short: "Art" },
-    ],
-  },
+  { kind: "headliner" as const, title: "Headliners" },
+  { kind: "sponsor" as const, title: "Sponsors" },
 ];
 
 export function Compare({ result, onOpen }: { result: LineupResult; onOpen: (id: string) => void }) {
-  const grid = "grid-cols-[minmax(0,1fr)_repeat(3,36px)_38px] sm:grid-cols-[minmax(0,1fr)_repeat(3,52px)_44px]";
+  const grid = "grid-cols-[minmax(0,1fr)_repeat(3,46px)] sm:grid-cols-[minmax(0,1fr)_repeat(3,64px)]";
   return (
     <section className="px-5 pb-10 pt-10">
       <h1 className="cond text-[44px]">Side by side</h1>
-      <p className="label mt-2">Three signals, every candidate, ranked within each group</p>
+      <p className="label mt-2">Qloo affinity (raw), generic LLM score from fame, and fit within your shortlist</p>
       {compareGroups.map((g) => {
         const rows = result.candidates.filter((c) => c.kind === g.kind);
         if (!rows.length) return null;
@@ -218,11 +213,8 @@ export function Compare({ result, onOpen }: { result: LineupResult; onOpen: (id:
             <h2 className="cond text-[32px]">{g.title}</h2>
             <div className={`mt-3 grid ${grid} items-end gap-x-1.5 border-b-[3px] border-[var(--ink)] pb-2`}>
               <span />
-              {g.cols.map((col) => (
-                <span key={col.label} className="label cmp-h text-center">
-                  {col.short}
-                </span>
-              ))}
+              <span className="label cmp-h text-center">Qloo</span>
+              <span className="label cmp-h text-center">LLM</span>
               <span className="label cmp-h text-center">Fit</span>
             </div>
             {rows.map((c) => (
@@ -232,14 +224,8 @@ export function Compare({ result, onOpen }: { result: LineupResult; onOpen: (id:
                 className={`press grid w-full ${grid} items-center gap-x-1.5 border-b border-[var(--ink)]/40 py-3 text-left`}
               >
                 <span className={`cond text-[22px] sm:text-[26px] ${isAvoid(c) ? "strike" : ""}`}>{c.name}</span>
-                {g.cols.map((col) => {
-                  const sig = c.signals.find((x) => x.label === col.label);
-                  return (
-                    <span key={col.label} className="text-center text-[15px] font-bold tabular-nums">
-                      {sig ? sig.strength : "-"}
-                    </span>
-                  );
-                })}
+                <span className="text-center text-[15px] font-bold tabular-nums">{c.affinity ?? "-"}</span>
+                <span className="text-center text-[15px] font-bold tabular-nums">{c.generic?.score ?? "-"}</span>
                 <span className="cond text-center text-[26px]">{c.fit}</span>
               </button>
             ))}
@@ -263,7 +249,7 @@ export function Audience({ result }: { result: LineupResult }) {
         ))}
       </ul>
       <p className="mt-6 text-[15px] font-medium leading-relaxed">
-        The agent scores every candidate against these. Scores come from Qloo&apos;s taste graph once connected.
+        The agent scores every candidate against these. Scores come from Qloo&apos;s taste graph.
       </p>
     </section>
   );

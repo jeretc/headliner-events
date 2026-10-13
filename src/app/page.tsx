@@ -58,6 +58,32 @@ export default function Home() {
     return () => window.removeEventListener("popstate", onPop);
   }, [apply]);
 
+  // Slow call (~5-15s): fills the fame-vs-fit panel in after the lineup is already on screen.
+  const addGeneric = useCallback(async (res: LineupResult) => {
+    try {
+      const names = (kind: string) => res.candidates.filter((c) => c.kind === kind).map((c) => c.name);
+      const r = await fetch("/api/generic", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          audience: res.request.seeds.map((s) => s.name),
+          headliners: names("headliner"),
+          sponsors: names("sponsor"),
+        }),
+      });
+      if (!r.ok) return;
+      const { scores } = (await r.json()) as { scores: Record<string, { score: number; line: string }> };
+      const merged: LineupResult = {
+        ...res,
+        candidates: res.candidates.map((c) => ({ ...c, generic: scores[c.name.toLowerCase()] ?? c.generic })),
+      };
+      if (resultRef.current === res) {
+        resultRef.current = merged;
+        setResult(merged);
+      }
+    } catch {}
+  }, []);
+
   const run = useCallback(
     async (r: LineupRequest) => {
       setRequest(r);
@@ -66,6 +92,7 @@ export default function Home() {
         const res = await getLineup(r);
         resultRef.current = res;
         setResult(res);
+        if (res.source === "qloo") void addGeneric(res);
         setFromExample(isExample);
         setGuideOpen(isExample);
         setPulseDone(false);
@@ -76,7 +103,7 @@ export default function Home() {
         setError("Something went wrong while ranking your lineup. Please try again.");
       }
     },
-    [isExample, push],
+    [isExample, push, addGeneric],
   );
   const finish = useCallback(() => replace({ phase: "done", openId: null }), [replace]);
 
@@ -130,12 +157,12 @@ export default function Home() {
   if (!result) return null;
   if (phase === "running") {
     const summary = `${result.candidates.length} candidates ranked against ${result.request.seeds.length} audience favourites.`;
-    return <Trace steps={result.steps} summary={summary} onDone={finish} />;
+    return <Trace steps={result.steps} summary={summary} live={result.source === "qloo"} onDone={finish} />;
   }
 
   return (
     <div key="results" className="screen app-pad mx-auto min-h-screen max-w-2xl">
-      <TopBar onRerun={() => push({ phase: "builder", openId: null })} onHome={goHome} />
+      <TopBar onRerun={() => push({ phase: "builder", openId: null })} onHome={goHome} live={result?.source === "qloo"} />
       <main>
         {tab === "lineup" && (
           <Lineup
@@ -152,7 +179,7 @@ export default function Home() {
         {tab === "audience" && <Audience result={result} />}
       </main>
       <TabBar tab={tab} onChange={setTab} />
-      {openId && <Detail order={result.candidates} id={openId} guided={guideOpen} onChange={changeCandidate} />}
+      {openId && <Detail order={result.candidates} id={openId} guided={guideOpen} live={result.source === "qloo"} onChange={changeCandidate} />}
     </div>
   );
 }

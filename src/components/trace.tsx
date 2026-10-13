@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import type { Step } from "@/lib/lineup";
 
-export function Trace({ steps, summary, onDone }: { steps: Step[]; summary: string; onDone: () => void }) {
+export function Trace({ steps, summary, live, onDone }: { steps: Step[]; summary: string; live?: boolean; onDone: () => void }) {
   const [n, setN] = useState(0);
   const endRef = useRef<HTMLDivElement>(null);
 
@@ -35,7 +35,7 @@ export function Trace({ steps, summary, onDone }: { steps: Step[]; summary: stri
         </div>
       </div>
       <div className="mx-auto max-w-2xl px-5 pb-24 pt-6">
-        <p className="label text-[var(--ground)]">Simulated trace · live Qloo calls once connected</p>
+        <p className="label text-[var(--ground)]">{live ? "Replay of the live Qloo run" : "Simulated trace · mock data"}</p>
         <ul className="mt-4">
           {steps.slice(0, n).map((s, i) => (
             <li key={i} className="line">

@@ -8,7 +8,8 @@ export type LineupResult = {
   request: LineupRequest;
   candidates: Candidate[];
   steps: Step[];
-  source: "mock";
+  skipped?: string[];
+  source: "mock" | "qloo";
 };
 
 export const slug = (s: string) => s.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
@@ -16,12 +17,18 @@ export const slug = (s: string) => s.toLowerCase().replace(/[^a-z0-9]+/g, "-").r
 export const demoRequest: LineupRequest = {
   eventName: demoEvent.name,
   seeds: demoEvent.seeds.map((name) => ({ id: slug(name), name })),
-  entries: demoCandidates.map((c) => ({ id: c.id, name: c.name, kind: c.kind })),
+  entries: [
+    ...demoCandidates.map((c) => ({ id: c.id, name: c.name, kind: c.kind })),
+    { id: "four-tet", name: "Four Tet", kind: "headliner" as const },
+    { id: "metallica", name: "Metallica", kind: "headliner" as const },
+    { id: "allbirds", name: "Allbirds", kind: "sponsor" as const },
+    { id: "walmart", name: "Walmart", kind: "sponsor" as const },
+  ],
 };
 
 export const blankRequest: LineupRequest = { eventName: "", seeds: [], entries: [] };
 
-// PLACEHOLDER suggestions; replaced by Qloo /search once the key is available.
+// Fallback suggestions used only if /api/search is unavailable.
 const artists = [
   "Tame Impala", "Fred again..", "Glass Animals", "Khruangbin", "Bonobo", "Billie Eilish", "Post Malone",
   "The Weeknd", "Radiohead", "Four Tet", "Caribou", "Mac DeMarco", "Arctic Monkeys", "Dua Lipa", "Kendrick Lamar",
@@ -32,7 +39,7 @@ const brands = [
   "Oatly", "Allbirds", "Corona", "Monster Energy", "Rolex", "Apple", "Levi's", "Vans", "Stella Artois", "Tesla", "Notion",
 ];
 
-export function searchEntities(query: string, kind: "artist" | "brand" | "any"): string[] {
+function mockSearch(query: string, kind: "artist" | "brand" | "any"): string[] {
   const q = query.trim().toLowerCase();
   if (!q) return [];
   const pool = kind === "artist" ? artists : kind === "brand" ? brands : [...artists, ...brands];
@@ -88,8 +95,20 @@ function withGeneric(c: Candidate): Candidate {
   return { ...c, generic: { score, line: "Broadly popular choice, judged on general fame." } };
 }
 
-// Single entry point for the UI. Swap the body for real Qloo calls later.
+// Single entry point for the UI. Real Qloo ranking via /api/lineup; falls back to mock data if unavailable.
 export async function getLineup(request: LineupRequest): Promise<LineupResult> {
+  try {
+    const r = await fetch("/api/lineup", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(request),
+    });
+    if (r.ok) return (await r.json()) as LineupResult;
+  } catch {}
+  return mockLineup(request);
+}
+
+function mockLineup(request: LineupRequest): LineupResult {
   const demoByName = new Map(demoCandidates.map((c) => [c.name.toLowerCase(), c]));
   const all = request.entries.map((e) => withGeneric(demoByName.get(e.name.toLowerCase()) ?? mockCandidate(e)));
   const sorted = [
@@ -102,4 +121,17 @@ export async function getLineup(request: LineupRequest): Promise<LineupResult> {
     ...sorted.map((c) => ({ tag: "Rank" as const, text: c.name, result: `${c.fit} · ${c.verdict}` })),
   ];
   return { request, candidates: sorted, steps, source: "mock" };
+}
+
+export async function searchEntities(query: string, kind: "artist" | "brand" | "any"): Promise<string[]> {
+  const q = query.trim();
+  if (!q) return [];
+  try {
+    const r = await fetch(`/api/search?q=${encodeURIComponent(q)}&kind=${kind}`);
+    if (r.ok) {
+      const { results } = (await r.json()) as { results: { name: string }[] };
+      if (results.length) return [...new Set(results.map((x) => x.name))];
+    }
+  } catch {}
+  return mockSearch(q, kind);
 }

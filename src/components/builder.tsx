@@ -17,8 +17,17 @@ function Picker({
   onAdd: (name: string) => void;
 }) {
   const [q, setQ] = useState("");
-  const matches = searchEntities(q, kind);
+  const [matches, setMatches] = useState<string[]>([]);
   const typed = q.trim();
+  useEffect(() => {
+    if (!typed) return;
+    let live = true;
+    const t = setTimeout(() => searchEntities(typed, kind).then((m) => live && setMatches(m)), 250);
+    return () => {
+      live = false;
+      clearTimeout(t);
+    };
+  }, [typed, kind]);
   const exact = matches.some((m) => m.toLowerCase() === typed.toLowerCase());
 
   const add = (name: string) => {
@@ -36,7 +45,11 @@ function Picker({
         value={q}
         onChange={(e) => setQ(e.target.value)}
         onKeyDown={(e) => {
-          if (e.key === "Enter" && typed) add(matches[0] ?? typed);
+          if (e.key === "Enter" && typed) {
+            const t = typed.toLowerCase();
+            const starts = matches.filter((m) => m.toLowerCase().startsWith(t));
+            add(matches.find((m) => m.toLowerCase() === t) ?? (starts.length === 1 ? starts[0] : typed));
+          }
         }}
         placeholder={placeholder}
         autoComplete="off"
@@ -264,7 +277,7 @@ export function Builder({
         </section>
 
         <p className="label mt-8 leading-relaxed">
-          Search suggestions are placeholders until Qloo is connected. You can add any name.
+          Suggestions come from Qloo. Names Qloo does not recognise are skipped when ranking.
         </p>
       </div>
 
