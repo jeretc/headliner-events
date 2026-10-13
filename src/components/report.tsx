@@ -22,7 +22,10 @@ export function TopBar({ onRerun }: { onRerun: () => void }) {
     <header className="safe-top flex items-center justify-between px-5 pb-1">
       <span className="cond text-[22px]">Headliner</span>
       <div className="flex items-center gap-2">
-        <span className="label border-2 border-[var(--ink)] px-2 py-1">Placeholder data</span>
+        <span className="label whitespace-nowrap border-2 border-[var(--ink)] px-2 py-1">
+          <span className="hidden sm:inline">Placeholder data</span>
+          <span className="sm:hidden">Mock data</span>
+        </span>
         <button onClick={onRerun} className="label press bg-[var(--ink)] px-3 py-[7px] text-[var(--paper)]">
           Edit
         </button>
@@ -199,7 +202,7 @@ const compareGroups = [
 ];
 
 export function Compare({ result, onOpen }: { result: LineupResult; onOpen: (id: string) => void }) {
-  const grid = "grid-cols-[minmax(0,1fr)_repeat(3,34px)_38px]";
+  const grid = "grid-cols-[minmax(0,1fr)_repeat(3,36px)_38px] sm:grid-cols-[minmax(0,1fr)_repeat(3,52px)_44px]";
   return (
     <section className="px-5 pb-10 pt-10">
       <h1 className="cond text-[44px]">Side by side</h1>
@@ -213,11 +216,11 @@ export function Compare({ result, onOpen }: { result: LineupResult; onOpen: (id:
             <div className={`mt-3 grid ${grid} items-end gap-x-1.5 border-b-[3px] border-[var(--ink)] pb-2`}>
               <span />
               {g.cols.map((col) => (
-                <span key={col.label} className="label text-center">
+                <span key={col.label} className="label cmp-h text-center">
                   {col.short}
                 </span>
               ))}
-              <span className="label text-center">Fit</span>
+              <span className="label cmp-h text-center">Fit</span>
             </div>
             {rows.map((c) => (
               <button

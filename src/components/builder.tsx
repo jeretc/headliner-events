@@ -209,7 +209,7 @@ export function Builder({
             </p>
           </div>
         )}
-        <h1 className="cond text-[44px] md:text-[36px]">{example ? "Skyline Festival" : "Your event"}</h1>
+        <h1 className="cond text-[44px] md:text-[36px]">{example ? "Example input" : "Your event"}</h1>
         <p className="label mt-2">Tell the agent who&apos;s coming and who&apos;s in the running</p>
 
         <section className="mt-8 md:mt-5">
