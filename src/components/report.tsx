@@ -73,12 +73,16 @@ export function Lineup({
   result,
   guided,
   pulse,
+  showTryOwn,
+  onTryOwn,
   onDismissGuide,
   onOpen,
 }: {
   result: LineupResult;
   guided: boolean;
   pulse: boolean;
+  showTryOwn: boolean;
+  onTryOwn: () => void;
   onDismissGuide: () => void;
   onOpen: (id: string) => void;
 }) {
@@ -147,9 +151,28 @@ export function Lineup({
         </div>
       )}
 
+      {result.candidates.length === 0 && (
+        <p className="mt-10 text-[17px] font-medium">No candidates were ranked. Go back and add some.</p>
+      )}
+
       <p className="label mt-10 text-left leading-relaxed">
         Bigger name = better cultural fit. Struck through = don&apos;t book. Tap any name for the evidence.
       </p>
+
+      {showTryOwn && (
+        <div className="mt-10 border-t-[3px] border-[var(--ink)] pt-8 text-left">
+          <p className="cond text-[34px]">Now try it on your own event.</p>
+          <p className="mt-2 text-[16px] font-medium leading-snug">
+            Enter who your crowd loves and who you&apos;re considering. The agent ranks your shortlist the same way.
+          </p>
+          <button
+            onClick={onTryOwn}
+            className="cond press mt-5 w-full bg-[var(--ink)] py-4 text-[30px] text-[var(--paper)]"
+          >
+            Plan my event
+          </button>
+        </div>
+      )}
     </section>
   );
 }

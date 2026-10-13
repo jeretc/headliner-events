@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import type { Step } from "@/lib/lineup";
 
-export function Trace({ steps, onDone }: { steps: Step[]; onDone: () => void }) {
+export function Trace({ steps, summary, onDone }: { steps: Step[]; summary: string; onDone: () => void }) {
   const [n, setN] = useState(0);
   const endRef = useRef<HTMLDivElement>(null);
 
@@ -18,7 +18,7 @@ export function Trace({ steps, onDone }: { steps: Step[]; onDone: () => void }) 
 
   useEffect(() => {
     endRef.current?.scrollIntoView({ block: "end" });
-  }, [n]);
+  }, [n, steps.length]);
 
   const pct = Math.round((n / steps.length) * 100);
   return (
@@ -49,6 +49,11 @@ export function Trace({ steps, onDone }: { steps: Step[]; onDone: () => void }) 
             </li>
           ))}
         </ul>
+        {n >= steps.length && (
+          <div className="line">
+            <p className="cond py-4 text-[28px] text-[var(--ground)]">{summary}</p>
+          </div>
+        )}
         <div ref={endRef} />
       </div>
     </div>

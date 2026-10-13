@@ -154,11 +154,13 @@ function ScrollRail({ scrollRef }: { scrollRef: RefObject<HTMLDivElement | null>
 export function Builder({
   initial,
   example,
+  error,
   onRun,
   onBack,
 }: {
   initial: LineupRequest;
   example: boolean;
+  error?: string | null;
   onRun: (r: LineupRequest) => void;
   onBack: () => void;
 }) {
@@ -193,6 +195,11 @@ export function Builder({
       </div>
 
       <div className="flex-1 pb-8 pl-5 pr-8 pt-6 md:px-5 md:pb-6 md:pt-4">
+        {error && (
+          <div role="alert" className="mb-6 border-[3px] border-[var(--ink)] px-4 py-3 text-[16px] font-bold leading-snug">
+            {error}
+          </div>
+        )}
         {example && (
           <div className="mb-6 bg-[var(--ink)] px-4 py-4 text-[var(--paper)]">
             <p className="label text-[var(--ground)]">Example event</p>

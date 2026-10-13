@@ -15,8 +15,16 @@ const body = Archivo({
 });
 
 export const metadata: Metadata = {
-  title: "Headliner",
-  description: "Who to book. Who to sponsor. Backed by evidence.",
+  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? "https://headliner-events.vercel.app"),
+  title: "Headliner: fame fills a poster, fit fills a festival",
+  description:
+    "An agent that tells event organizers who to book and who to sponsor, ranked by real cultural fit with the audience, with the evidence shown.",
+  openGraph: {
+    title: "Headliner",
+    description: "Fame fills a poster. Fit fills a festival. Rank headliners and sponsors by real audience fit.",
+    type: "website",
+  },
+  twitter: { card: "summary_large_image", title: "Headliner", description: "Fame fills a poster. Fit fills a festival." },
   appleWebApp: { capable: true, title: "Headliner", statusBarStyle: "black-translucent" },
 };
 
