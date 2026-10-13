@@ -22,6 +22,8 @@ export default function Home() {
   const [guideOpen, setGuideOpen] = useState(false);
   const [pulseDone, setPulseDone] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [busy, setBusy] = useState(false);
+  const busyRef = useRef(false);
   const resultRef = useRef<LineupResult | null>(null);
 
   const apply = useCallback((n: Nav) => {
@@ -86,6 +88,9 @@ export default function Home() {
 
   const run = useCallback(
     async (r: LineupRequest) => {
+      if (busyRef.current) return; // ignore repeat clicks while a ranking is in flight
+      busyRef.current = true;
+      setBusy(true);
       setRequest(r);
       setError(null);
       try {
@@ -101,6 +106,9 @@ export default function Home() {
         push({ phase: "running", openId: null });
       } catch {
         setError("Something went wrong while ranking your lineup. Please try again.");
+      } finally {
+        busyRef.current = false;
+        setBusy(false);
       }
     },
     [isExample, push, addGeneric],
@@ -147,6 +155,7 @@ export default function Home() {
         initial={request}
         example={isExample}
         error={error}
+        busy={busy}
         onRun={run}
         onHome={goHome}
         onBack={() => (window.history.state ? window.history.back() : apply({ phase: "gate", openId: null }))}

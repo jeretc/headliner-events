@@ -165,10 +165,13 @@ function ScrollRail({ scrollRef }: { scrollRef: RefObject<HTMLDivElement | null>
   );
 }
 
+const BUSY_STEPS = ["Matching names with Qloo", "Pulling taste signals for your crowd", "Ranking your shortlist", "Almost there"];
+
 export function Builder({
   initial,
   example,
   error,
+  busy,
   onRun,
   onBack,
   onHome,
@@ -176,6 +179,7 @@ export function Builder({
   initial: LineupRequest;
   example: boolean;
   error?: string | null;
+  busy?: boolean;
   onRun: (r: LineupRequest) => void;
   onBack: () => void;
   onHome: () => void;
@@ -198,6 +202,15 @@ export function Builder({
   const headliners = entries.filter((e) => e.kind === "headliner");
   const sponsors = entries.filter((e) => e.kind === "sponsor");
   const ready = eventName.trim() && seeds.length >= 1 && entries.length >= 2;
+  const [step, setStep] = useState(0);
+  useEffect(() => {
+    if (!busy) return;
+    const t = setInterval(() => setStep((n) => Math.min(n + 1, BUSY_STEPS.length - 1)), 3500);
+    return () => {
+      clearInterval(t);
+      setStep(0);
+    };
+  }, [busy]);
 
   return (
     <div className="fixed inset-0">
@@ -285,13 +298,19 @@ export function Builder({
       <div className="sticky bottom-0 z-10 bg-[var(--ground)]">
         <div className="builder-bottom mx-auto max-w-2xl px-5 pt-3">
           <button
-            disabled={!ready}
+            disabled={!ready || busy}
+            aria-busy={busy}
             onClick={() => onRun({ eventName: eventName.trim(), seeds, entries })}
-            className="cond press w-full bg-[var(--ink)] py-4 text-[36px] text-[var(--paper)] disabled:opacity-40 md:py-3 md:text-[30px]"
+            className={`cond press w-full bg-[var(--ink)] py-4 text-[36px] text-[var(--paper)] disabled:opacity-40 md:py-3 md:text-[30px] ${busy ? "animate-pulse !opacity-100" : ""}`}
           >
-            Build the lineup
+            {busy ? "Building…" : "Build the lineup"}
           </button>
-          {!ready && <p className="label mt-2 text-center">Add at least 1 favourite and 2 candidates</p>}
+          {busy && (
+            <p role="status" aria-live="polite" className="label mt-2 text-center">
+              {BUSY_STEPS[step]}… this takes a few seconds
+            </p>
+          )}
+          {!ready && !busy && <p className="label mt-2 text-center">Add at least 1 favourite and 2 candidates</p>}
         </div>
       </div>
     </div>
