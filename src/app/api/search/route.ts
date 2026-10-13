@@ -1,10 +1,12 @@
 import { qlooConfigured, searchQloo } from "@/lib/qloo";
+import { limited } from "@/lib/ratelimit";
 
 export async function GET(req: Request) {
   const p = new URL(req.url).searchParams;
   const q = (p.get("q") ?? "").trim().slice(0, 60);
   const kind = p.get("kind");
-  if (!q || !qlooConfigured()) return Response.json({ results: [] });
+  if (q.length < 2 || !qlooConfigured()) return Response.json({ results: [] });
+  if (limited("search", req, 150, 2000)) return Response.json({ results: [], error: "rate_limited" }, { status: 429 });
   try {
     const kinds: ("artist" | "brand")[] = kind === "artist" || kind === "brand" ? [kind] : ["artist", "brand"];
     const lists = await Promise.all(kinds.map((k) => searchQloo(q, k, kinds.length > 1 ? 3 : 6)));
