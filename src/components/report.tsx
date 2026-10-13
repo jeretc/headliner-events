@@ -42,7 +42,8 @@ export function TopBar({ onRerun, onHome, live }: { onRerun: () => void; onHome:
   );
 }
 
-export const disagrees = (c: Candidate) => !!c.generic && Math.abs(c.generic.score - c.fit) >= 25;
+// A near-tie shortlist (closeCall) never counts as a disagreement: its fit scores are stretched, not decisive.
+export const disagrees = (c: Candidate) => !c.closeCall && !!c.generic && Math.abs(c.generic.score - c.fit) >= 25;
 
 // The pick where Qloo and a generic answer disagree most: the best place to send a first-time viewer.
 // Falls back to the weakest headliner while the generic answers are still loading.
@@ -63,9 +64,11 @@ function GuideStrip({ target, onDismiss }: { target: Candidate; onDismiss: () =>
       Tap <strong>{target.name}</strong>:{" "}
       {disagrees(target)
         ? `a generic AI scores it ${target.generic!.score}, Qloo's fit is ${target.fit}`
-        : isAvoid(target)
-          ? "struck through, the weakest fit"
-          : "the weakest fit of the headliners"}
+        : target.closeCall
+          ? "see the evidence behind where it ranks"
+          : isAvoid(target)
+            ? "struck through, the weakest fit"
+            : "the weakest fit of the headliners"}
       . See why.
     </>,
     <>
@@ -94,6 +97,13 @@ function GuideStrip({ target, onDismiss }: { target: Candidate; onDismiss: () =>
     </div>
   );
 }
+
+
+const CloseCallNote = () => (
+  <p className="mx-auto mb-5 max-w-md border-2 border-[var(--ink)] px-3 py-2 text-[13px] font-bold leading-snug">
+    Close call: Qloo scores these within a few points of each other, so the order is a tiebreak, not a clear verdict.
+  </p>
+);
 
 export function Lineup({
   result,
@@ -139,6 +149,7 @@ export function Lineup({
       {headliners.length > 0 && (
         <div className="mt-8 border-t-[3px] border-[var(--ink)] pt-8">
           <p className="label mb-5">Headline</p>
+          {headliners.some((c) => c.closeCall) && <CloseCallNote />}
           <div className="flex flex-col items-center gap-[3cqw]">
             {headliners.map((c, i) => (
               <button
@@ -162,6 +173,7 @@ export function Lineup({
       {sponsors.length > 0 && (
         <div className="mt-8 border-t-[3px] border-[var(--ink)] pt-8">
           <p className="label mb-5">Presented by</p>
+          {sponsors.some((c) => c.closeCall) && <CloseCallNote />}
           <div className="flex flex-wrap items-baseline justify-center gap-x-[3cqw] gap-y-[3cqw]">
             {sponsors.map((c, i) => (
               <button

@@ -10,6 +10,7 @@ export type Candidate = {
   fit: number;
   affinity?: number;
   crowdFavourite?: boolean;
+  closeCall?: boolean;
   verdict: string;
   why: string;
   signals: Signal[];

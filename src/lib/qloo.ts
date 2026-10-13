@@ -1,5 +1,6 @@
 // Server-only Qloo client. Never import from client components: the key stays on the server.
 import { getCache } from "@vercel/functions";
+import { norm } from "./normalize";
 import type { Candidate } from "./mock-report";
 import type { LineupRequest, LineupResult, Step } from "./lineup";
 
@@ -88,16 +89,20 @@ export async function searchQloo(query: string, kind: Kind, take = 6): Promise<H
   return (j.results ?? []).map((r) => ({ id: r.entity_id, name: r.name, kind, image: r.properties?.image?.url }));
 }
 
-const same = (a: string, b: string) => a.trim().toLowerCase() === b.trim().toLowerCase();
+const same = (a: string, b: string) => {
+  const x = norm(a);
+  return x !== "" && x === norm(b);
+};
 
 async function resolve(name: string, kinds: Kind[]): Promise<Hit | null> {
   const all = (await Promise.all(kinds.map((k) => searchQloo(name, k, 3).catch(() => [] as Hit[])))).flat();
   const exact = all.filter((h) => same(h.name, name));
   const pick = exact.find((h) => h.kind === "brand") ?? exact[0];
   if (pick) return pick;
-  const n = name.trim().toLowerCase();
+  const n = norm(name);
+  if (n.length < 2) return null;
   // Accept a near match (one name contains the other), never an unrelated top hit.
-  return all.find((h) => h.name.toLowerCase().includes(n) || n.includes(h.name.toLowerCase())) ?? null;
+  return all.find((h) => { const hn = norm(h.name); return hn.length >= 2 && (hn.includes(n) || n.includes(hn)); }) ?? null;
 }
 
 type InsightsResp = {
@@ -186,6 +191,8 @@ export async function qlooLineup(input: LineupRequest): Promise<LineupResult> {
     const top = scored[0].r?.query?.affinity ?? 0;
     const bottom = scored[scored.length - 1].r?.query?.affinity ?? 0;
     const range = Math.max(top - bottom, 0.2);
+    // Raw scores within 5 points of each other: the order is a tiebreak, not a clear verdict.
+    const closeCall = scored.length > 1 && top - bottom < 0.05;
     scored.forEach((x, i) => {
       const affinity = x.r?.query?.affinity ?? 0;
       const fit = scored.length === 1 ? Math.round(affinity * 100) : Math.max(3, Math.min(99, Math.round(((affinity - (top - range)) / range) * 100)));
@@ -208,6 +215,7 @@ export async function qlooLineup(input: LineupRequest): Promise<LineupResult> {
         kind: role,
         fit,
         affinity: Math.round(affinity * 100),
+        closeCall,
         verdict,
         why: lead
           ? `Qloo's taste graph links ${x.h.name} most strongly to the audience of ${lead}. Qloo affinity ${affinity.toFixed(2)}, ranked ${i + 1} of ${scored.length} ${role}s on this shortlist.`

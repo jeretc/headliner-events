@@ -104,8 +104,15 @@ export default function Home() {
         setIsExample(false);
         setTab("lineup");
         push({ phase: "running", openId: null });
-      } catch {
-        setError("Something went wrong while ranking your lineup. Please try again.");
+      } catch (e) {
+        const m = e instanceof Error ? e.message : "";
+        setError(
+          m === "rate_limited"
+            ? "You have run a lot of rankings in a short time. Please wait a few minutes and try again."
+            : m === "bad_request"
+              ? "That event could not be ranked. Check that it has a crowd favourite and at least two candidates, and keep within the limits."
+              : "Something went wrong while ranking your lineup. Please try again.",
+        );
       } finally {
         busyRef.current = false;
         setBusy(false);

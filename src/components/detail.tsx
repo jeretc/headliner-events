@@ -80,8 +80,8 @@ export function Detail({
             <p className="label">Cultural fit</p>
             <p className="cond text-[88px]">{c.fit}</p>
           </div>
-          <div className="flex w-[34%] items-center justify-center border-[3px] border-[var(--ink)]">
-            <span className="cond text-center text-[34px] leading-none">{isAvoid(c) ? "Weakest fit" : c.verdict}</span>
+          <div className="flex w-[36%] min-w-0 items-center justify-center border-[3px] border-[var(--ink)] px-1 [container-type:inline-size]">
+            <span className="cond max-w-full text-center text-[clamp(13px,19cqw,34px)] leading-[0.95]">{isAvoid(c) ? "Weakest fit" : c.verdict}</span>
           </div>
         </div>
 
@@ -107,14 +107,19 @@ export function Detail({
                 <p className="mt-1 text-[14px] font-medium leading-snug">Fit for this exact audience, relative to your shortlist.</p>
               </div>
             </div>
-            {c.generic.score >= 75 && c.fit < 50 && (
+            {!c.closeCall && c.generic.score >= 75 && c.fit < 50 && (
               <p className="mt-3 text-[16px] font-bold leading-snug">
                 Looks like a safe hit. Doesn&apos;t fit this crowd.
               </p>
             )}
-            {c.generic.score < 65 && c.fit >= 80 && (
+            {!c.closeCall && c.generic.score < 65 && c.fit >= 80 && (
               <p className="mt-3 text-[16px] font-bold leading-snug">
                 Easy to overlook on fame. This crowd&apos;s taste points straight at it.
+              </p>
+            )}
+            {c.closeCall && (
+              <p className="mt-3 text-[16px] font-bold leading-snug">
+                Close call: Qloo scores this whole shortlist within a few points, so the order is a tiebreak, not a clear verdict.
               </p>
             )}
             <p className="label mt-3 text-[var(--ink)]/60">Generic answer: an LLM using general knowledge only, no Qloo data</p>

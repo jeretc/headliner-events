@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState, type RefObject } from "react";
-import { searchEntities, slug, type Entry, type LineupRequest, type Seed, type Suggestion } from "@/lib/lineup";
+import { MAX_ENTRIES, MAX_SEEDS, searchEntities, slug, type Entry, type LineupRequest, type Seed, type Suggestion } from "@/lib/lineup";
 
 type Kind = "artist" | "brand" | "any";
 
@@ -9,11 +9,13 @@ function Picker({
   label,
   placeholder,
   kind,
+  full,
   onAdd,
 }: {
   label: string;
   placeholder: string;
   kind: Kind;
+  full?: boolean;
   onAdd: (name: string) => void;
 }) {
   const [q, setQ] = useState("");
@@ -51,7 +53,8 @@ function Picker({
             add(matches.find((m) => m.name.toLowerCase() === t)?.name ?? (starts.length === 1 ? starts[0].name : typed));
           }
         }}
-        placeholder={placeholder}
+        placeholder={full ? "Limit reached" : placeholder}
+        disabled={full}
         autoComplete="off"
         className="mt-2 w-full border-[3px] border-[var(--ink)] bg-transparent px-3 py-3 text-[18px] font-bold md:py-2 outline-none placeholder:font-medium placeholder:text-[var(--ink)]/55 focus:bg-[var(--paper)]"
       />
@@ -190,10 +193,10 @@ export function Builder({
   const scrollRef = useRef<HTMLDivElement>(null);
 
   const addSeed = (name: string) =>
-    setSeeds((s) => (s.some((x) => x.name.toLowerCase() === name.toLowerCase()) ? s : [...s, { id: slug(name), name }]));
+    setSeeds((s) => (s.length >= MAX_SEEDS || s.some((x) => x.name.toLowerCase() === name.toLowerCase()) ? s : [...s, { id: slug(name), name }]));
   const addEntry = (kind: Entry["kind"]) => (name: string) =>
     setEntries((s) =>
-      s.some((x) => x.name.toLowerCase() === name.toLowerCase())
+      s.length >= MAX_ENTRIES || s.some((x) => x.name.toLowerCase() === name.toLowerCase())
         ? s
         : [...s, { id: slug(name) + "-" + kind, name, kind }],
     );
@@ -259,11 +262,11 @@ export function Builder({
         <section className="mt-10 border-t-[3px] border-[var(--ink)] pt-6 md:mt-7 md:pt-5">
           <h2 className="cond flex items-baseline gap-3 text-[32px] md:text-[26px]">
             <span className="text-[var(--paper)]">1</span>The crowd
-            <span className="label ml-auto">{seeds.length} added</span>
+            <span className="label ml-auto">{seeds.length} added · max {MAX_SEEDS}</span>
           </h2>
           <p className="mt-1 text-[15px] font-medium">What your attendees already love. Artists, brands, anything.</p>
           <div className="mt-4 md:mt-3">
-            <Picker label="Add a favourite" placeholder="Search artists and brands" kind="any" onAdd={addSeed} />
+            <Picker label="Add a favourite" placeholder="Search artists and brands" kind="any" full={seeds.length >= MAX_SEEDS} onAdd={addSeed} />
           </div>
           <Chips names={seeds.map((s) => s.name)} onRemove={(n) => setSeeds((s) => s.filter((x) => x.name !== n))} />
         </section>
@@ -271,10 +274,10 @@ export function Builder({
         <section className="mt-10 border-t-[3px] border-[var(--ink)] pt-6 md:mt-7 md:pt-5">
           <h2 className="cond flex items-baseline gap-3 text-[32px] md:text-[26px]">
             <span className="text-[var(--paper)]">2</span>Headliner candidates
-            <span className="label ml-auto">{headliners.length} added</span>
+            <span className="label ml-auto">{headliners.length} added · {entries.length}/{MAX_ENTRIES} candidates</span>
           </h2>
           <div className="mt-4 md:mt-3">
-            <Picker label="Add an artist" placeholder="Search artists" kind="artist" onAdd={addEntry("headliner")} />
+            <Picker label="Add an artist" placeholder="Search artists" kind="artist" full={entries.length >= MAX_ENTRIES} onAdd={addEntry("headliner")} />
           </div>
           <Chips names={headliners.map((e) => e.name)} onRemove={removeEntry} />
         </section>
@@ -282,10 +285,10 @@ export function Builder({
         <section className="mt-10 border-t-[3px] border-[var(--ink)] pt-6 md:mt-7 md:pt-5">
           <h2 className="cond flex items-baseline gap-3 text-[32px] md:text-[26px]">
             <span className="text-[var(--paper)]">3</span>Sponsor candidates
-            <span className="label ml-auto">{sponsors.length} added</span>
+            <span className="label ml-auto">{sponsors.length} added · {entries.length}/{MAX_ENTRIES} candidates</span>
           </h2>
           <div className="mt-4 md:mt-3">
-            <Picker label="Add a brand" placeholder="Search brands" kind="brand" onAdd={addEntry("sponsor")} />
+            <Picker label="Add a brand" placeholder="Search brands" kind="brand" full={entries.length >= MAX_ENTRIES} onAdd={addEntry("sponsor")} />
           </div>
           <Chips names={sponsors.map((e) => e.name)} onRemove={removeEntry} />
         </section>

@@ -1,5 +1,9 @@
 import { candidates as demoCandidates, event as demoEvent, type Candidate } from "./mock-report";
 
+// Per-request caps. The builder enforces them; the API rejects anything larger.
+export const MAX_SEEDS = 12;
+export const MAX_ENTRIES = 20;
+
 export type Seed = { id: string; name: string };
 export type Entry = { id: string; name: string; kind: "headliner" | "sponsor" };
 export type LineupRequest = { eventName: string; seeds: Seed[]; entries: Entry[] };
@@ -109,7 +113,12 @@ export async function getLineup(request: LineupRequest): Promise<LineupResult> {
       body: JSON.stringify(request),
     });
     if (r.ok) return (await r.json()) as LineupResult;
-  } catch {}
+    // These are the visitor's to fix, so tell them instead of quietly showing mock data.
+    if (r.status === 429) throw new Error("rate_limited");
+    if (r.status === 400) throw new Error("bad_request");
+  } catch (e) {
+    if (e instanceof Error && (e.message === "rate_limited" || e.message === "bad_request")) throw e;
+  }
   return mockLineup(request);
 }
 

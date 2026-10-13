@@ -163,6 +163,11 @@ button:not(:disabled) { cursor: pointer; }
 
 /* Gate: on desktop leave room so an auto-hiding OS taskbar doesn't cover the buttons */
 .gate-bottom { padding-bottom: max(1.5rem, env(safe-area-inset-bottom)); }
+/* First page: fit the visible screen on phones (dvh excludes the browser bars) so nothing needs a scroll. */
+.gate-root { min-height: 100vh; min-height: 100dvh; }
+.gate-gap { margin-top: clamp(0.9rem, 3.4dvh, 2rem); }
+.gate-gap-sm { margin-top: clamp(0.5rem, 1.8dvh, 1.25rem); }
+@media (max-height: 800px) { .gate-teaser { display: none; } }
 @media (min-width: 768px) { .gate-bottom { padding-bottom: 4.5rem; } }
 button:disabled { cursor: not-allowed; }
 

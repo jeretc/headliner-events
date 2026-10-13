@@ -99,7 +99,8 @@ No secrets are committed to this repository. Hackathon keys only work against th
 **About the data and Qloo**
 
 - **Qloo's raw scores are close together.** For well-known artists and brands the raw affinity sits in a narrow band, roughly 0.65 to 0.95. Headliner therefore shows **fit as each pick's standing within your shortlist** (best = 99) and always shows the raw affinity next to it. The weakest pick on any list gets a low fit and a strike-through even when its raw affinity is still decent. Read it as "weakest of what you brought", not "bad".
-- **Coverage.** Qloo only knows the entities in its database. Names it does not recognise are skipped, and the lineup page lists them so nothing disappears silently. Spelling and putting artists in the artist box and brands in the brand box both matter.
+- **Close calls.** When Qloo scores every pick in a group within about 5 points of each other, the picks are effectively tied. Headliner says so on the lineup and in each detail sheet ("close call"), and shows no strike-through or "overlooked" claim, because the order is then a tiebreak and not a clear verdict. Strike-throughs appear only when one pick clearly falls below the rest.
+- **Coverage.** Qloo only knows the entities in its database. Names it does not recognise (for example some regional brands) are skipped, and the lineup page lists them so nothing disappears silently. Matching ignores case, accents and punctuation, but putting artists in the artist box and brands in the brand box still matters.
 - **No self-scoring.** Qloo does not score an entity against its own audience, so a candidate that is also a crowd favourite is marked a certain fit instead of ranked.
 - **Rate limits.** Qloo answers bursts with HTTP 429. Headliner limits concurrent calls and retries, so a full ranking can take 10 to 15 seconds the first time; repeats are served from cache.
 - **Aggregate affinity only.** Qloo results describe what groups tend to like. They are not evidence about any individual and are not a guarantee a booking will succeed.
@@ -108,7 +109,8 @@ No secrets are committed to this repository. Hackathon keys only work against th
 
 - **Scope.** Headliner ranks artists (headliners) and brands (sponsors) only, by design. Qloo supports other entity types, which are not used here.
 - **The generic-LLM score is an estimate.** It comes from Gemini and can vary by around 10 points between slightly different requests. Identical requests are cached and repeat exactly. If the call fails or is rate limited, that panel is hidden.
-- **Fair-use limits.** To protect the shared quota, each visitor can run about 12 rankings every 10 minutes.
+- **Size limits.** A ranking takes up to 12 audience favourites and 20 candidates in total. The builder stops you at those limits.
+- **Fair-use limits.** To protect the shared quota, each visitor can run about 12 rankings every 10 minutes. Beyond that the app says so and asks you to wait, instead of showing mock data.
 - A high fit score says nothing about fees, availability, contracts or brand safety.
 - Results depend on how well the crowd favourites you enter represent the real attendees.
 - No personal data is sent to Qloo. Audience inputs are public artists and brands only.
