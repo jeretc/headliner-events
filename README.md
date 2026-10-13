@@ -4,6 +4,10 @@
 
 Built for the [Qloo Agentic Hackathon](https://qloo.devpost.com/).
 
+![Headliner running on a desktop monitor and a phone](docs/screenshots/00-desktop-and-phone.jpg)
+
+*The same app on a desktop and on a phone. Live demo: https://headliner-events.vercel.app*
+
 ## 1. The problem
 
 Festivals, conferences and brand activations spend most of their budget on two decisions: who headlines, and which brands sponsor. Both are usually made on gut feel, past ticket sales, or whoever's agent called first. A mismatch is expensive: a sponsor whose brand clashes with the crowd earns no goodwill, and a headliner who doesn't fit the audience leaves tickets unsold.
