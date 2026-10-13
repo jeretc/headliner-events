@@ -161,6 +161,7 @@ export async function qlooLineup(input: LineupRequest): Promise<LineupResult> {
         name: x.h.name,
         kind: role,
         fit: 99,
+        crowdFavourite: true,
         verdict,
         why: `${x.h.name} is already one of this crowd's favourites, so it is a certain fit. Qloo does not score an entity against its own audience.`,
         signals: [],

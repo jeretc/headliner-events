@@ -42,17 +42,31 @@ export function TopBar({ onRerun, onHome, live }: { onRerun: () => void; onHome:
   );
 }
 
+export const disagrees = (c: Candidate) => !!c.generic && Math.abs(c.generic.score - c.fit) >= 25;
+
 // The pick where Qloo and a generic answer disagree most: the best place to send a first-time viewer.
+// Falls back to the weakest headliner while the generic answers are still loading.
 export function guideTarget(candidates: Candidate[]) {
+  const withGeneric = candidates.filter((c) => c.generic);
+  if (withGeneric.length) {
+    const best = withGeneric.reduce((m, c) => (Math.abs(c.generic!.score - c.fit) > Math.abs(m.generic!.score - m.fit) ? c : m));
+    if (disagrees(best)) return best;
+  }
   return candidates
     .filter((c) => c.kind === "headliner")
     .reduce<Candidate | null>((m, c) => (!m || c.fit < m.fit ? c : m), null);
 }
 
-function GuideStrip({ name, struck, onDismiss }: { name: string; struck: boolean; onDismiss: () => void }) {
+function GuideStrip({ target, onDismiss }: { target: Candidate; onDismiss: () => void }) {
   const steps = [
     <>
-      Tap <strong>{name}</strong>: {struck ? "big name, struck through here" : "the weakest fit of the headliners"}. See why.
+      Tap <strong>{target.name}</strong>:{" "}
+      {disagrees(target)
+        ? `a generic AI scores it ${target.generic!.score}, Qloo's fit is ${target.fit}`
+        : isAvoid(target)
+          ? "struck through, the weakest fit"
+          : "the weakest fit of the headliners"}
+      . See why.
     </>,
     <>
       Open <strong>Compare</strong> for every pick side by side.
@@ -103,7 +117,7 @@ export function Lineup({
   const sponsors = result.candidates.filter((c) => c.kind === "sponsor");
   return (
     <section className="poster px-5 pb-10 pt-6 text-center">
-      {guided && target && <GuideStrip name={target.name} struck={isAvoid(target)} onDismiss={onDismissGuide} />}
+      {guided && target && <GuideStrip target={target} onDismiss={onDismissGuide} />}
       <p className="label">Recommended lineup</p>
       <h1 className="line mt-3">
         <span className="cond text-[17cqw]" style={{ ["--i" as string]: 0 }}>
@@ -224,8 +238,8 @@ export function Compare({ result, onOpen }: { result: LineupResult; onOpen: (id:
                 className={`press grid w-full ${grid} items-center gap-x-1.5 border-b border-[var(--ink)]/40 py-3 text-left`}
               >
                 <span className={`cond text-[22px] sm:text-[26px] ${isAvoid(c) ? "strike" : ""}`}>{c.name}</span>
-                <span className="text-center text-[15px] font-bold tabular-nums">{c.affinity ?? "-"}</span>
-                <span className="text-center text-[15px] font-bold tabular-nums">{c.generic?.score ?? "-"}</span>
+                <span className="text-center text-[15px] font-bold tabular-nums">{c.crowdFavourite ? "fav" : (c.affinity ?? "-")}</span>
+                <span className="text-center text-[15px] font-bold tabular-nums">{c.crowdFavourite ? "fav" : (c.generic?.score ?? "-")}</span>
                 <span className="cond text-center text-[26px]">{c.fit}</span>
               </button>
             ))}
