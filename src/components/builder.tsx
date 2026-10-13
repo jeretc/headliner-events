@@ -116,8 +116,8 @@ export function Builder({
   const ready = eventName.trim() && seeds.length >= 1 && entries.length >= 2;
 
   return (
-    <div className="builder-scroll fixed inset-0 overflow-y-auto">
-    <div className="mx-auto min-h-screen max-w-2xl">
+    <div className="fixed inset-0">
+    <div className="builder-scroll mx-auto flex h-full max-w-2xl flex-col overflow-y-auto">
       <div className="safe-top flex items-center justify-between px-5 pb-1">
         <span className="cond text-[22px]">Headliner</span>
         <button onClick={onBack} className="label press border-2 border-[var(--ink)] px-3 py-2">
@@ -125,7 +125,7 @@ export function Builder({
         </button>
       </div>
 
-      <div className="px-5 pb-8 pt-6 md:pb-6 md:pt-4">
+      <div className="flex-1 px-5 pb-8 pt-6 md:pb-6 md:pt-4">
         {example && (
           <div className="mb-6 bg-[var(--ink)] px-4 py-4 text-[var(--paper)]">
             <p className="label text-[var(--ground)]">Example event</p>
