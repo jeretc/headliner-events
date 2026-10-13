@@ -181,7 +181,7 @@ export function Builder({
       </div>
 
       <div className="fixed inset-x-0 bottom-0 z-10 bg-[var(--ground)]">
-        <div className="gate-bottom mx-auto max-w-2xl px-5 pt-3">
+        <div className="builder-bottom mx-auto max-w-2xl px-5 pt-3">
           <button
             disabled={!ready}
             onClick={() => onRun({ eventName: eventName.trim(), seeds, entries })}
