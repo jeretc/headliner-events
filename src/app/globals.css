@@ -139,7 +139,7 @@
 html, body { background: var(--ground); color: var(--ink); overscroll-behavior: none; }
 body { font-family: var(--font-body), system-ui, sans-serif; -webkit-tap-highlight-color: transparent; }
 .cond { font-family: var(--font-cond), sans-serif; font-weight: 900; text-transform: uppercase; line-height: .86; letter-spacing: -0.005em; }
-.label { font-family: var(--font-body), sans-serif; font-weight: 800; font-size: 11px; letter-spacing: .12em; text-transform: uppercase; }
+.label { font-family: var(--font-body), sans-serif; font-weight: 800; font-size: 12px; letter-spacing: .12em; text-transform: uppercase; }
 .app-pad { padding-bottom: calc(var(--tabbar) + env(safe-area-inset-bottom)); }
 .safe-top { padding-top: max(1.25rem, env(safe-area-inset-top)); }
 .safe-bottom { padding-bottom: max(1.5rem, env(safe-area-inset-bottom)); }
@@ -147,7 +147,7 @@ body { font-family: var(--font-body), system-ui, sans-serif; -webkit-tap-highlig
 .poster { container-type: inline-size; }
 .press { transition: transform .12s ease; }
 .press:active { transform: scale(.97); }
-.strike { text-decoration: line-through; text-decoration-thickness: .09em; opacity: .55; }
+.strike { text-decoration: line-through; text-decoration-thickness: .09em; opacity: .8; }
 
 .line { display: block; overflow: hidden; }
 .line > * { display: block; animation: up .7s cubic-bezier(.2,.8,.2,1) both; animation-delay: calc(var(--i, 0) * 70ms); }
@@ -183,3 +183,7 @@ button:disabled { cursor: not-allowed; }
 /* Compare table column headings: smaller on narrow screens so adjacent labels never collide */
 .cmp-h { font-size: 9px; letter-spacing: 0.04em; }
 @media (min-width: 640px) { .cmp-h { font-size: 11px; letter-spacing: 0.1em; } }
+
+/* Visible keyboard focus */
+button:focus-visible, input:focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; }
+.sheet button:focus-visible, .sheet input:focus-visible { outline-color: var(--ink); }

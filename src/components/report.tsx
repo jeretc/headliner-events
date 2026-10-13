@@ -44,31 +44,32 @@ export function guideTarget(candidates: Candidate[]) {
 }
 
 function GuideStrip({ name, onDismiss }: { name: string; onDismiss: () => void }) {
+  const steps = [
+    <>
+      Tap <strong>{name}</strong>: big on fame, struck through here. See why.
+    </>,
+    <>
+      Open <strong>Compare</strong> for every pick side by side.
+    </>,
+    <>
+      <strong>Edit</strong> changes the crowd. <strong>Plan my event</strong> starts your own.
+    </>,
+  ];
   return (
-    <div className="mb-8 bg-[var(--ink)] px-4 py-4 text-left text-[var(--paper)]">
-      <div className="flex items-start justify-between gap-3">
+    <div className="mb-6 bg-[var(--ink)] px-4 py-3 text-left text-[var(--paper)]">
+      <div className="flex items-center justify-between gap-3">
         <p className="label text-[var(--ground)]">Guided example</p>
-        <button onClick={onDismiss} className="label press border-2 border-[var(--paper)] px-2 py-1">
+        <button onClick={onDismiss} className="label press border-2 border-[var(--paper)] px-2 py-0.5">
           Got it
         </button>
       </div>
-      <p className="mt-2 text-[16px] font-medium leading-snug">
-        You&apos;re looking at an example run. Here&apos;s what to try:
-      </p>
-      <ol className="mt-3 flex flex-col gap-2 text-[16px] font-medium leading-snug">
-        <li>
-          <span className="cond text-[22px] text-[var(--ground)]">1 </span>
-          Tap <strong>{name}</strong>. A huge name on fame, but struck through here. See why.
-        </li>
-        <li>
-          <span className="cond text-[22px] text-[var(--ground)]">2 </span>
-          Open <strong>Compare</strong> to see every pick side by side.
-        </li>
-        <li>
-          <span className="cond text-[22px] text-[var(--ground)]">3 </span>
-          Tap <strong>Edit</strong> to change the crowd and re-run, or go back and choose <strong>Plan my event</strong>{" "}
-          to try your own.
-        </li>
+      <ol className="mt-2 flex flex-col gap-1.5 text-[15px] font-medium leading-snug">
+        {steps.map((t, i) => (
+          <li key={i} className="flex gap-2">
+            <span className="cond text-[20px] leading-none text-[var(--ground)]">{i + 1}</span>
+            <span>{t}</span>
+          </li>
+        ))}
       </ol>
     </div>
   );

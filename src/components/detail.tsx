@@ -69,7 +69,7 @@ export function Detail({
         </div>
 
         <p className="label mt-8">{c.kind === "headliner" ? "Headliner" : "Sponsor"}</p>
-        <h2 className={`cond mt-2 text-[22vw] sm:text-[120px] ${avoid ? "strike" : ""}`}>{c.name}</h2>
+        <h2 className={`cond mt-2 text-[17vw] sm:text-[88px] ${avoid ? "strike" : ""}`}>{c.name}</h2>
 
         <div className="mt-6 flex items-stretch gap-3">
           <div
