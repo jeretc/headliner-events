@@ -89,3 +89,7 @@ Link will be added at submission.
 ## License
 
 [MIT](LICENSE)
+
+## Disclaimer
+
+Headliner is an independent project built for the Qloo Agentic Hackathon. It is not affiliated with or endorsed by Qloo.
