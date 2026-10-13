@@ -185,7 +185,7 @@ export async function qlooLineup(input: LineupRequest): Promise<LineupResult> {
     // score is each pick's standing within THIS shortlist (best = 99); the raw affinity stays in the evidence text.
     const top = scored[0].r?.query?.affinity ?? 0;
     const bottom = scored[scored.length - 1].r?.query?.affinity ?? 0;
-    const range = Math.max(top - bottom, 0.12);
+    const range = Math.max(top - bottom, 0.2);
     scored.forEach((x, i) => {
       const affinity = x.r?.query?.affinity ?? 0;
       const fit = scored.length === 1 ? Math.round(affinity * 100) : Math.max(3, Math.min(99, Math.round(((affinity - (top - range)) / range) * 100)));
