@@ -169,3 +169,11 @@ button:disabled { cursor: not-allowed; }
 /* Builder bar: desktop spacing for an auto-hiding taskbar (separate from the gate) */
 .builder-bottom { padding-bottom: max(1.5rem, env(safe-area-inset-bottom)); }
 @media (min-width: 768px) { .builder-bottom { padding-bottom: 3.5rem; } }
+
+/* Builder: thin, always-visible scrollbar so users know there is more to scroll */
+.builder-scroll::-webkit-scrollbar { width: 10px; }
+.builder-scroll::-webkit-scrollbar-track { background: rgba(14, 14, 14, 0.18); }
+.builder-scroll::-webkit-scrollbar-thumb { background: var(--ink); }
+@supports not selector(::-webkit-scrollbar) {
+  .builder-scroll { scrollbar-width: thin; scrollbar-color: var(--ink) rgba(14, 14, 14, 0.18); }
+}

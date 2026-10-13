@@ -116,6 +116,7 @@ export function Builder({
   const ready = eventName.trim() && seeds.length >= 1 && entries.length >= 2;
 
   return (
+    <div className="builder-scroll fixed inset-0 overflow-y-auto">
     <div className="mx-auto min-h-screen max-w-2xl">
       <div className="safe-top flex items-center justify-between px-5 pb-1">
         <span className="cond text-[22px]">Headliner</span>
@@ -124,13 +125,13 @@ export function Builder({
         </button>
       </div>
 
-      <div className="px-5 pb-40 pt-6 md:pb-52 md:pt-4">
+      <div className="px-5 pb-8 pt-6 md:pb-6 md:pt-4">
         {example && (
           <div className="mb-6 bg-[var(--ink)] px-4 py-4 text-[var(--paper)]">
             <p className="label text-[var(--ground)]">Example event</p>
             <p className="mt-1 text-[16px] font-medium leading-snug">
               This is what an organizer enters: who the crowd loves, and who they&apos;re considering. Press Build the
-              lineup to see the agent rank them. You can edit anything first.
+              lineup to see the agent rank them. You can edit anything first. Scroll down to see the whole list.
             </p>
           </div>
         )}
@@ -180,7 +181,7 @@ export function Builder({
         </p>
       </div>
 
-      <div className="fixed inset-x-0 bottom-0 z-10 bg-[var(--ground)]">
+      <div className="sticky bottom-0 z-10 bg-[var(--ground)]">
         <div className="builder-bottom mx-auto max-w-2xl px-5 pt-3">
           <button
             disabled={!ready}
@@ -192,6 +193,7 @@ export function Builder({
           {!ready && <p className="label mt-2 text-center">Add at least 1 favourite and 2 candidates</p>}
         </div>
       </div>
+    </div>
     </div>
   );
 }
