@@ -75,7 +75,7 @@ function mockCandidate(e: Entry): Candidate {
     why: "Placeholder reasoning. With a Qloo key connected, this explains the fit using real taste-graph signals for your audience.",
     signals: labels.map((label, i) => ({
       label,
-      strength: clamp(fit + ((h >> (i * 3 + 2)) % 17) - 8),
+      strength: clamp(fit + ((h >>> (i * 3 + 2)) % 17) - 8),
       note: "Mock signal, replaced by Qloo data",
     })),
   };
@@ -96,7 +96,7 @@ const demoGeneric: Record<string, { score: number; line: string }> = {
 function withGeneric(c: Candidate): Candidate {
   const g = demoGeneric[c.name.toLowerCase()];
   if (g) return { ...c, generic: g };
-  const score = 40 + ((hash(c.name.toLowerCase()) >> 5) % 55);
+  const score = 40 + ((hash(c.name.toLowerCase()) >>> 5) % 55);
   return { ...c, generic: { score, line: "Broadly popular choice, judged on general fame." } };
 }
 

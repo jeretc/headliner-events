@@ -81,7 +81,7 @@ export function Detail({
             <p className="cond text-[88px]">{c.fit}</p>
           </div>
           <div className="flex w-[34%] items-center justify-center border-[3px] border-[var(--ink)]">
-            <span className="cond text-[34px]">{c.verdict}</span>
+            <span className="cond text-center text-[34px] leading-none">{isAvoid(c) ? "Weakest fit" : c.verdict}</span>
           </div>
         </div>
 
@@ -117,7 +117,7 @@ export function Detail({
                 Easy to overlook on fame. This crowd&apos;s taste points straight at it.
               </p>
             )}
-            <p className="label mt-3 text-[var(--ink)]/60">Generic answer: an LLM using fame and general knowledge only, no Qloo data</p>
+            <p className="label mt-3 text-[var(--ink)]/60">Generic answer: an LLM using general knowledge only, no Qloo data</p>
           </div>
         )}
 

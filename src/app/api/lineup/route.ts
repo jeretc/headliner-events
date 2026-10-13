@@ -39,7 +39,8 @@ export async function POST(req: Request) {
   };
   try {
     return Response.json(await qlooLineup(request));
-  } catch {
+  } catch (e) {
+    console.error("lineup failed:", e instanceof Error ? e.message : e);
     return Response.json({ error: "upstream_failed" }, { status: 502 });
   }
 }

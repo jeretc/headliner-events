@@ -1,4 +1,5 @@
 // Server-only Qloo client. Never import from client components: the key stays on the server.
+import { getCache } from "@vercel/functions";
 import type { Candidate } from "./mock-report";
 import type { LineupRequest, LineupResult, Step } from "./lineup";
 
@@ -7,6 +8,26 @@ const TTL_MS = 24 * 60 * 60 * 1000;
 const cache = new Map<string, { at: number; data: unknown }>();
 
 export const qlooConfigured = () => Boolean(process.env.QLOO_API_KEY);
+
+const rc = () => {
+  try {
+    return getCache({ namespace: "qloo" });
+  } catch {
+    return null;
+  }
+};
+async function sharedGet<T>(key: string): Promise<T | undefined> {
+  try {
+    return ((await rc()?.get(key)) ?? undefined) as T | undefined;
+  } catch {
+    return undefined;
+  }
+}
+async function sharedSet(key: string, data: unknown) {
+  try {
+    await rc()?.set(key, data, { ttl: TTL_MS / 1000, name: "qloo-response" });
+  } catch {}
+}
 
 // Qloo answers 429 to bursts, so cap concurrent upstream calls.
 const MAX_CONCURRENT = 2;
@@ -29,6 +50,12 @@ async function qlooGet<T>(path: string, params: Record<string, string | number>)
   const ck = url.toString();
   const hit = cache.get(ck);
   if (hit && Date.now() - hit.at < TTL_MS) return hit.data as T;
+  // Second level: Vercel Runtime Cache, shared across instances and cold starts (private, never in the repo).
+  const shared = await sharedGet<T>(ck);
+  if (shared != null) {
+    cache.set(ck, { at: Date.now(), data: shared });
+    return shared;
+  }
 
   let lastErr: unknown;
   for (let attempt = 0; attempt < 5; attempt++) {
@@ -38,6 +65,7 @@ async function qlooGet<T>(path: string, params: Record<string, string | number>)
       if (!r.ok) throw Object.assign(new Error(`Qloo ${r.status}`), { fatal: true });
       const data = (await r.json()) as T;
       cache.set(ck, { at: Date.now(), data });
+      void sharedSet(ck, data);
       return data;
     } catch (e) {
       lastErr = e;

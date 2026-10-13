@@ -1,3 +1,5 @@
+import { getCache } from "@vercel/functions";
+
 // Server-only: what a generic LLM says from fame alone (no Qloo data), for the fame-vs-fit contrast.
 const MODEL = "gemini-2.5-flash";
 const cache = new Map<string, Record<string, { score: number; line: string }>>();
@@ -8,8 +10,15 @@ export async function genericScores(audience: string[], headliners: string[], sp
   const key = JSON.stringify([audience, headliners, sponsors]).toLowerCase();
   const hit = cache.get(key);
   if (hit) return hit;
+  try {
+    const shared = (await getCache({ namespace: "generic" }).get(key)) as Record<string, { score: number; line: string }> | undefined;
+    if (shared != null) {
+      cache.set(key, shared);
+      return shared;
+    }
+  } catch {}
 
-  const prompt = `You advise an event organizer using general knowledge only (fame, reputation, reach).
+  const prompt = `You advise an event organizer using your general knowledge only (no taste or audience-affinity data). Judge how good a choice each candidate is for this event's audience.
 Audience favourites: ${audience.join(", ")}.
 Rate ONLY the headliner and sponsor candidates listed below (not the audience favourites), each 0-100 for how good a booking/sponsor choice it is for this event, with ONE short sentence (max 14 words) justifying it.
 Headliners: ${headliners.join(", ") || "none"}.
@@ -31,6 +40,7 @@ Sponsors: ${sponsors.join(", ") || "none"}.`;
         responseMimeType: "application/json",
         responseSchema: schema,
         temperature: 0,
+        seed: 42,
         thinkingConfig: { thinkingBudget: 0 },
       },
     }),
@@ -42,5 +52,8 @@ Sponsors: ${sponsors.join(", ") || "none"}.`;
   const out: Record<string, { score: number; line: string }> = {};
   for (const x of rows) out[x.name.toLowerCase()] = { score: Math.max(0, Math.min(100, x.score)), line: x.line };
   cache.set(key, out);
+  try {
+    await getCache({ namespace: "generic" }).set(key, out, { ttl: 24 * 60 * 60, name: "generic-llm" });
+  } catch {}
   return out;
 }

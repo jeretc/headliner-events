@@ -173,7 +173,7 @@ export function Lineup({
       )}
 
       <p className="label mt-10 text-left leading-relaxed">
-        Bigger name = better cultural fit. Struck through = don&apos;t book. Tap any name for the evidence.
+        Bigger name = better cultural fit. Struck through = weakest fit on your shortlist. Tap any name for the evidence.
       </p>
 
       {showTryOwn && (
@@ -204,7 +204,7 @@ export function Compare({ result, onOpen }: { result: LineupResult; onOpen: (id:
   return (
     <section className="px-5 pb-10 pt-10">
       <h1 className="cond text-[44px]">Side by side</h1>
-      <p className="label mt-2">Qloo affinity (raw), generic LLM score from fame, and fit within your shortlist</p>
+      <p className="label mt-2">Qloo affinity (raw), generic LLM score (general knowledge only), and fit within your shortlist</p>
       {compareGroups.map((g) => {
         const rows = result.candidates.filter((c) => c.kind === g.kind);
         if (!rows.length) return null;

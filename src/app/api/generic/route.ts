@@ -25,7 +25,8 @@ export async function POST(req: Request) {
   try {
     const scores = await genericScores(list(body.audience, 12), list(body.headliners, 20), list(body.sponsors, 20));
     return Response.json({ scores });
-  } catch {
+  } catch (e) {
+    console.error("generic failed:", e instanceof Error ? e.message : e);
     return Response.json({ error: "upstream_failed" }, { status: 502 });
   }
 }
