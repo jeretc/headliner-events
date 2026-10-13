@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState, type RefObject } from "react";
 import { searchEntities, slug, type Entry, type LineupRequest, type Seed } from "@/lib/lineup";
 
 type Kind = "artist" | "brand" | "any";
@@ -86,6 +86,71 @@ function Chips({ names, onRemove }: { names: string[]; onRemove: (name: string) 
   );
 }
 
+// Always-visible scroll rail: shorter than the window and vertically centred, beside the content.
+function ScrollRail({ scrollRef }: { scrollRef: RefObject<HTMLDivElement | null> }) {
+  const trackRef = useRef<HTMLDivElement>(null);
+  const [thumb, setThumb] = useState({ top: 0, height: 100 });
+
+  useEffect(() => {
+    const el = scrollRef.current;
+    if (!el) return;
+    const update = () => {
+      const max = el.scrollHeight - el.clientHeight;
+      const h = Math.min(100, Math.max(14, (el.clientHeight / el.scrollHeight) * 100));
+      const t = max > 0 ? (el.scrollTop / max) * (100 - h) : 0;
+      setThumb({ top: t, height: h });
+    };
+    update();
+    el.addEventListener("scroll", update, { passive: true });
+    const ro = new ResizeObserver(update);
+    ro.observe(el);
+    Array.from(el.children).forEach((c) => ro.observe(c));
+    return () => {
+      el.removeEventListener("scroll", update);
+      ro.disconnect();
+    };
+  }, [scrollRef]);
+
+  const scrollToY = (clientY: number, grab: number) => {
+    const el = scrollRef.current;
+    const track = trackRef.current;
+    if (!el || !track) return;
+    const r = track.getBoundingClientRect();
+    const thumbPx = (thumb.height / 100) * r.height;
+    const ratio = Math.min(1, Math.max(0, (clientY - r.top - grab) / Math.max(1, r.height - thumbPx)));
+    el.scrollTop = ratio * (el.scrollHeight - el.clientHeight);
+  };
+
+  return (
+    <div
+      ref={trackRef}
+      aria-hidden
+      className="absolute right-2 top-1/2 z-20 h-[45%] w-[7px] -translate-y-1/2 touch-none bg-[var(--ink)]/20"
+      onPointerDown={(e) => {
+        const track = trackRef.current;
+        if (!track) return;
+        const r = track.getBoundingClientRect();
+        const thumbPx = (thumb.height / 100) * r.height;
+        const thumbTop = r.top + (thumb.top / 100) * r.height;
+        const onThumb = e.clientY >= thumbTop && e.clientY <= thumbTop + thumbPx;
+        const grab = onThumb ? e.clientY - thumbTop : thumbPx / 2;
+        e.currentTarget.setPointerCapture(e.pointerId);
+        scrollToY(e.clientY, grab);
+        (e.currentTarget as HTMLDivElement).dataset.grab = String(grab);
+      }}
+      onPointerMove={(e) => {
+        if (!e.currentTarget.hasPointerCapture(e.pointerId)) return;
+        scrollToY(e.clientY, Number((e.currentTarget as HTMLDivElement).dataset.grab ?? 0));
+      }}
+    >
+      <div
+        className="absolute inset-x-0 bg-[var(--ink)]"
+        style={{ top: `${thumb.top}%`, height: `${thumb.height}%` }}
+      />
+    </div>
+  );
+}
+
 export function Builder({
   initial,
   example,
@@ -100,6 +165,7 @@ export function Builder({
   const [eventName, setEventName] = useState(initial.eventName);
   const [seeds, setSeeds] = useState<Seed[]>(initial.seeds);
   const [entries, setEntries] = useState<Entry[]>(initial.entries);
+  const scrollRef = useRef<HTMLDivElement>(null);
 
   const addSeed = (name: string) =>
     setSeeds((s) => (s.some((x) => x.name.toLowerCase() === name.toLowerCase()) ? s : [...s, { id: slug(name), name }]));
@@ -117,7 +183,8 @@ export function Builder({
 
   return (
     <div className="fixed inset-0">
-    <div className="builder-scroll mx-auto flex h-full max-w-2xl flex-col overflow-y-auto">
+    <div className="relative mx-auto h-full max-w-2xl">
+    <div ref={scrollRef} className="builder-scroll flex h-full flex-col overflow-y-auto">
       <div className="safe-top flex items-center justify-between px-5 pb-1">
         <span className="cond text-[22px]">Headliner</span>
         <button onClick={onBack} className="label press border-2 border-[var(--ink)] px-3 py-2">
@@ -193,6 +260,8 @@ export function Builder({
           {!ready && <p className="label mt-2 text-center">Add at least 1 favourite and 2 candidates</p>}
         </div>
       </div>
+    </div>
+    <ScrollRail scrollRef={scrollRef} />
     </div>
     </div>
   );
