@@ -39,11 +39,16 @@ const brands = [
   "Oatly", "Allbirds", "Corona", "Monster Energy", "Rolex", "Apple", "Levi's", "Vans", "Stella Artois", "Tesla", "Notion",
 ];
 
-function mockSearch(query: string, kind: "artist" | "brand" | "any"): string[] {
+export type Suggestion = { name: string; kind: "artist" | "brand" };
+
+function mockSearch(query: string, kind: "artist" | "brand" | "any"): Suggestion[] {
   const q = query.trim().toLowerCase();
   if (!q) return [];
-  const pool = kind === "artist" ? artists : kind === "brand" ? brands : [...artists, ...brands];
-  return pool.filter((n) => n.toLowerCase().includes(q)).slice(0, 6);
+  const pool: Suggestion[] = [
+    ...(kind === "brand" ? [] : artists.map((name) => ({ name, kind: "artist" as const }))),
+    ...(kind === "artist" ? [] : brands.map((name) => ({ name, kind: "brand" as const }))),
+  ];
+  return pool.filter((n) => n.name.toLowerCase().includes(q)).slice(0, 6);
 }
 
 const hash = (s: string) => {
@@ -123,14 +128,14 @@ function mockLineup(request: LineupRequest): LineupResult {
   return { request, candidates: sorted, steps, source: "mock" };
 }
 
-export async function searchEntities(query: string, kind: "artist" | "brand" | "any"): Promise<string[]> {
+export async function searchEntities(query: string, kind: "artist" | "brand" | "any"): Promise<Suggestion[]> {
   const q = query.trim();
   if (!q) return [];
   try {
     const r = await fetch(`/api/search?q=${encodeURIComponent(q)}&kind=${kind}`);
     if (r.ok) {
-      const { results } = (await r.json()) as { results: { name: string }[] };
-      if (results.length) return [...new Set(results.map((x) => x.name))];
+      const { results } = (await r.json()) as { results: Suggestion[] };
+      return results;
     }
   } catch {}
   return mockSearch(q, kind);

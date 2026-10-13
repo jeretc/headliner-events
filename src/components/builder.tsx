@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState, type RefObject } from "react";
-import { searchEntities, slug, type Entry, type LineupRequest, type Seed } from "@/lib/lineup";
+import { searchEntities, slug, type Entry, type LineupRequest, type Seed, type Suggestion } from "@/lib/lineup";
 
 type Kind = "artist" | "brand" | "any";
 
@@ -17,7 +17,7 @@ function Picker({
   onAdd: (name: string) => void;
 }) {
   const [q, setQ] = useState("");
-  const [matches, setMatches] = useState<string[]>([]);
+  const [matches, setMatches] = useState<Suggestion[]>([]);
   const typed = q.trim();
   useEffect(() => {
     if (!typed) return;
@@ -28,7 +28,7 @@ function Picker({
       clearTimeout(t);
     };
   }, [typed, kind]);
-  const exact = matches.some((m) => m.toLowerCase() === typed.toLowerCase());
+  const exact = matches.some((m) => m.name.toLowerCase() === typed.toLowerCase());
 
   const add = (name: string) => {
     onAdd(name);
@@ -47,8 +47,8 @@ function Picker({
         onKeyDown={(e) => {
           if (e.key === "Enter" && typed) {
             const t = typed.toLowerCase();
-            const starts = matches.filter((m) => m.toLowerCase().startsWith(t));
-            add(matches.find((m) => m.toLowerCase() === t) ?? (starts.length === 1 ? starts[0] : typed));
+            const starts = matches.filter((m) => m.name.toLowerCase().startsWith(t));
+            add(matches.find((m) => m.name.toLowerCase() === t)?.name ?? (starts.length === 1 ? starts[0].name : typed));
           }
         }}
         placeholder={placeholder}
@@ -58,9 +58,10 @@ function Picker({
       {typed && (
         <ul className="border-x-[3px] border-b-[3px] border-[var(--ink)] bg-[var(--paper)]">
           {matches.map((m) => (
-            <li key={m}>
-              <button onClick={() => add(m)} className="press w-full px-3 py-3 text-left text-[17px] font-bold">
-                {m}
+            <li key={`${m.kind}:${m.name}`}>
+              <button onClick={() => add(m.name)} className="press flex w-full items-baseline justify-between gap-3 px-3 py-3 text-left text-[17px] font-bold">
+                <span>{m.name}</span>
+                {kind === "any" && <span className="label shrink-0 text-[var(--ink)]/60">{m.kind}</span>}
               </button>
             </li>
           ))}
