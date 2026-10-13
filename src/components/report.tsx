@@ -178,7 +178,7 @@ const compareGroups = [
 export function Compare({ result, onOpen }: { result: LineupResult; onOpen: (id: string) => void }) {
   const grid = "grid-cols-[minmax(0,1fr)_repeat(3,34px)_38px]";
   return (
-    <section className="px-5 pb-10 pt-6">
+    <section className="px-5 pb-10 pt-10">
       <h1 className="cond text-[44px]">Side by side</h1>
       <p className="label mt-2">Three signals, every candidate, ranked within each group</p>
       {compareGroups.map((g) => {
@@ -223,7 +223,7 @@ export function Compare({ result, onOpen }: { result: LineupResult; onOpen: (id:
 
 export function Audience({ result }: { result: LineupResult }) {
   return (
-    <section className="px-5 pb-10 pt-6">
+    <section className="px-5 pb-10 pt-10">
       <h1 className="cond text-[44px]">The crowd</h1>
       <p className="label mt-2">What {result.request.eventName} attendees already love</p>
       <ul className="mt-6 border-t-[3px] border-[var(--ink)]">
