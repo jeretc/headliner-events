@@ -44,7 +44,7 @@ Qloo is what makes the ranking different from a generic answer. Headliner follow
 
 Artists are ranked as `filter.type=urn:entity:artist` and brands as `urn:entity:brand`, in separate calls, against the same crowd. Only documented endpoints and parameters are used, with `GET` requests and the `X-Api-Key` header.
 
-The **fame vs fit** panel asks a general-purpose LLM (Google Gemini) to rate the same shortlist for the same audience from general knowledge only, with no Qloo data. Putting the two side by side is how you see what Qloo adds.
+The **fame vs fit** panel asks a general-purpose LLM (Google Gemini) to rate the same shortlist for the same audience from general knowledge only, with no Qloo data. Putting the two side by side is how you see what Qloo adds: the LLM scores from general knowledge and fame, Qloo scores from how much each candidate overlaps with this specific crowd's favourites, and the app shows where the two disagree.
 
 Calls run server-side only. The API key is never sent to the browser. Responses are cached privately on the server (Vercel Runtime Cache) to stay within quota, and are never stored in this repository.
 
