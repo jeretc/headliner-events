@@ -19,8 +19,6 @@ export const metadata: Metadata = {
   title: "Headliner: fame fills a poster, fit fills a festival",
   description:
     "An agent that tells event organizers who to book and who to sponsor, ranked by real cultural fit with the audience, with the evidence shown.",
-  // Unlisted until the hackathon submission: remove this line (and the X-Robots-Tag header in next.config.ts) to allow indexing.
-  robots: { index: false, follow: false },
   openGraph: {
     title: "Headliner",
     description: "Fame fills a poster. Fit fills a festival. Rank headliners and sponsors by real audience fit.",
